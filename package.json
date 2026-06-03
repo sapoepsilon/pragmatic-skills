@@ -1,0 +1,17 @@
+{
+  "name": "pragmatic-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Curated registry of skills for Claude Code and Codex CLI.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "catalog": "node scripts/generate-catalog.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "yaml": "^2.6.1"
+  }
+}

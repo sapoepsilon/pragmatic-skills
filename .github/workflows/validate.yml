@@ -1,0 +1,31 @@
+name: validate
+
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - "schema/**"
+      - "scripts/**"
+      - "package.json"
+      - ".github/workflows/validate.yml"
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm install --no-audit --no-fund
+      - run: npm run validate
+      - name: Verify catalog is up to date
+        run: |
+          npm run catalog
+          if ! git diff --exit-code README.md; then
+            echo "::error::README catalog is out of sync. Run 'npm run catalog' and commit."
+            exit 1
+          fi

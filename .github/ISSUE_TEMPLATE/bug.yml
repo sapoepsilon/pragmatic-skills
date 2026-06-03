@@ -1,0 +1,28 @@
+name: Report a problem
+description: A skill is broken, the schema is wrong, or the registry tooling failed.
+title: "bug: <area> — <summary>"
+labels: ["bug"]
+body:
+  - type: input
+    id: area
+    attributes:
+      label: Area
+      description: Which skill, doc, or script is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps

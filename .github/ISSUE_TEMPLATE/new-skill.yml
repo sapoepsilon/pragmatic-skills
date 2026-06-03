@@ -1,0 +1,39 @@
+name: Propose a new skill
+description: Suggest a skill you'd like to see in the registry (or that you plan to submit).
+title: "proposal: <skill-name> — <one-line>"
+labels: ["proposal"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Skill name
+      description: kebab-case, e.g. `conventional-commit`
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What does it do?
+      description: One paragraph. Who would use it and when?
+    validations:
+      required: true
+  - type: dropdown
+    id: targets
+    attributes:
+      label: Target agents
+      multiple: true
+      options:
+        - Claude Code
+        - Codex
+    validations:
+      required: true
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Trigger examples
+      description: Concrete things a user would say that should invoke this skill.
+  - type: input
+    id: author
+    attributes:
+      label: Will you author it?
+      description: yes / no / maybe — helps maintainers track ownership.
