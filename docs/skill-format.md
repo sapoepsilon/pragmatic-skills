@@ -1,97 +1,73 @@
 # Skill format
 
-A single manifest plus per-agent entry files. The manifest captures everything an installer needs to know; the entry files are whatever the target agent expects (Claude Code's `SKILL.md`, Codex's prompt markdown).
+Each skill ships as a Claude Code plugin under `plugins/<name>/`. Codex support is optional and lives alongside, inside the same plugin directory.
 
 ## Layout
 
 ```
-skills/<name>/
-├── manifest.yml
-├── README.md
-├── claude-code/
-│   ├── SKILL.md
-│   └── …                    # extra files the skill loads (scripts, templates, refs)
-└── codex/
-    └── prompt.md
+plugins/<name>/
+├── .claude-plugin/
+│   └── plugin.json          # required — Claude Code plugin manifest
+├── skills/
+│   └── <name>/
+│       └── SKILL.md         # required — the skill itself
+├── codex/                   # optional — Codex prompt for the same behavior
+│   └── <name>.md
+└── README.md                # required — install + usage
 ```
 
-A skill that only targets one agent omits the other directory and sets `supported: false` (or omits the agent entirely) in the manifest.
+Plus the bundle plugin:
 
-## Manifest schema
-
-The authoritative definition is [`schema/skill.schema.json`](../schema/skill.schema.json). Annotated example:
-
-```yaml
-# Required
-name: my-skill                       # kebab-case, unique
-description: |
-  One-line summary that the agent uses to decide when to invoke the skill.
-  Keep it specific — include trigger conditions ("when the user asks to commit",
-  "after editing a TSX file").
-version: 0.1.0                       # semver
-license: MIT                         # SPDX identifier
-
-authors:
-  - github: your-handle              # at least one author required
-    name: Your Name                  # optional
-    email: you@example.com           # optional
-
-# Optional but strongly encouraged
-tags:                                # used for catalog filtering
-  - git
-  - workflow
-trigger_keywords:                    # phrases the user might say
-  - commit
-  - save changes
-homepage: https://example.com/skill  # optional
-repository: https://github.com/...   # optional, if the skill lives upstream
-
-# Required: declare which agents the skill targets
-compatibility:
-  claude_code:
-    supported: true
-    entry: claude-code/SKILL.md      # path relative to skill directory
-    install_to: ~/.claude/skills/{name}/   # default for Claude Code, can override
-  codex:
-    supported: true
-    entry: codex/prompt.md
-    install_to: ~/.codex/prompts/{name}.md
-
-# Optional — surface risk to the installer
-permissions:
-  network: false                     # does the skill make network calls?
-  filesystem_write: true             # does it write outside its install dir?
-  shell: true                        # does it invoke shell commands?
-  notes: |
-    Runs `git` commands and writes to the current working directory only.
+```
+plugins/pragmatic/
+├── .claude-plugin/plugin.json
+├── skills/
+│   └── <skill>/SKILL.md     # mirror of each individual plugin's canonical SKILL.md
+└── README.md
 ```
 
-## Per-agent entries
+The bundle's `SKILL.md` files are **copies**, not symlinks (so Claude Code can copy the plugin cleanly into its plugin cache). They are kept in sync by `npm run sync`, and the validator fails if they drift.
 
-### `claude-code/SKILL.md`
+## `plugin.json`
 
-A Claude Code skill markdown file with YAML frontmatter. The `name` and `description` fields **must** match the manifest. Example:
+Authoritative schema: [`schema/plugin.schema.json`](../schema/plugin.schema.json). Minimum viable:
+
+```json
+{
+  "name": "muchotexto",
+  "description": "Compress responses to the tightest faithful length.",
+  "version": "0.1.0",
+  "author": { "name": "your-handle" },
+  "license": "MIT",
+  "keywords": ["brevity", "communication"]
+}
+```
+
+`name` must match the directory name and the skill folder name inside `skills/`. Bump `version` on every change merged to `main` — Claude Code only delivers updates to users when this field changes (or when the commit SHA changes if `version` is omitted).
+
+## `SKILL.md`
+
+Plain Claude Code skill file. YAML frontmatter at the top:
 
 ```markdown
 ---
-name: my-skill
-description: One-line summary that surfaces in the agent's skill list.
+description: One-line summary. Used by the model to decide when to invoke.
 ---
 
-[Instructions for the agent. Markdown. May reference other files in this directory.]
+[Skill body. Markdown. May reference other files in this skills/<name>/ directory.]
 ```
 
-Anything else in `claude-code/` (scripts, templates) is copied alongside `SKILL.md` when installed.
+Do **not** include a `name` field in the frontmatter — the directory name is the skill name.
 
-### `codex/prompt.md`
+## `codex/<name>.md` (optional)
 
-A Codex prompt file. Codex treats the filename as the slash command, so a skill named `my-skill` becomes `/my-skill`. The file is plain markdown — no frontmatter required.
+A plain markdown file matching what Codex expects: the content is injected as the user's message when they type `/<name>`. Use `$ARGUMENTS` to capture text the user typed after the slash command.
 
-```markdown
-[Instructions for the agent, in the form the user would expect when they type the slash command.]
-```
+If you don't want to support Codex, omit the `codex/` directory entirely — the catalog will reflect that.
 
-If you need the same content in both agents, it's fine to have `codex/prompt.md` source from `../claude-code/SKILL.md` via a build step — but the file must exist when the manifest claims `supported: true`.
+## `marketplace.json`
+
+The top-level [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json) lists every plugin in the registry, including the `pragmatic` bundle. New plugins must be added to this file; the validator checks every declared `source` path exists. Schema: [`schema/marketplace.schema.json`](../schema/marketplace.schema.json).
 
 ## Versioning
 
@@ -100,4 +76,4 @@ Follow semver:
 - **Minor** — new capabilities, backward-compatible
 - **Patch** — wording fixes, internal tweaks
 
-Bump the version on every change merged to `main`.
+When bumping a skill, bump the same version in both its `plugin.json` and in its marketplace entry, then run `npm run sync && npm run catalog`.

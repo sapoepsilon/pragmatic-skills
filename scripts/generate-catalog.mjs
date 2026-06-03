@@ -2,41 +2,45 @@
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parse as parseYaml } from "yaml";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const skillsDir = join(root, "skills");
+const pluginsDir = join(root, "plugins");
 const readmePath = join(root, "README.md");
 
-const skills = [];
-if (existsSync(skillsDir)) {
-  for (const dirName of readdirSync(skillsDir)) {
-    const p = join(skillsDir, dirName);
+const plugins = [];
+if (existsSync(pluginsDir)) {
+  for (const dirName of readdirSync(pluginsDir)) {
+    const p = join(pluginsDir, dirName);
     if (!statSync(p).isDirectory() || dirName.startsWith(".")) continue;
-    const manifestPath = join(p, "manifest.yml");
+    const manifestPath = join(p, ".claude-plugin", "plugin.json");
     if (!existsSync(manifestPath)) continue;
     try {
-      skills.push(parseYaml(readFileSync(manifestPath, "utf8")));
+      const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+      const hasCodex = existsSync(join(p, "codex"));
+      plugins.push({ ...manifest, _codex: hasCodex, _dir: dirName });
     } catch {
       // skip malformed
     }
   }
 }
 
-skills.sort((a, b) => a.name.localeCompare(b.name));
+plugins.sort((a, b) => {
+  if (a._dir === "pragmatic") return -1;
+  if (b._dir === "pragmatic") return 1;
+  return a._dir.localeCompare(b._dir);
+});
 
 let block;
-if (skills.length === 0) {
-  block = "_No skills published yet._";
+if (plugins.length === 0) {
+  block = "_No plugins published yet._";
 } else {
-  const rows = skills.map((s) => {
-    const targets = [];
-    if (s.compatibility?.claude_code?.supported) targets.push("Claude Code");
-    if (s.compatibility?.codex?.supported) targets.push("Codex");
-    const tags = (s.tags ?? []).map((t) => `\`${t}\``).join(" ");
-    return `| [\`${s.name}\`](./skills/${s.name}) | ${s.description.replace(/\n+/g, " ")} | ${targets.join(", ")} | ${tags} |`;
+  const rows = plugins.map((p) => {
+    const targets = ["Claude Code"];
+    if (p._codex) targets.push("Codex");
+    const tags = (p.keywords ?? []).map((t) => `\`${t}\``).join(" ");
+    return `| [\`${p._dir}\`](./plugins/${p._dir}) | ${(p.description ?? "").replace(/\n+/g, " ")} | ${targets.join(", ")} | ${tags} |`;
   });
-  block = ["| Skill | Description | Targets | Tags |", "| --- | --- | --- | --- |", ...rows].join("\n");
+  block = ["| Plugin | Description | Targets | Tags |", "| --- | --- | --- | --- |", ...rows].join("\n");
 }
 
 const readme = readFileSync(readmePath, "utf8");
@@ -49,5 +53,5 @@ if (updated === readme) {
   console.log("Catalog unchanged.");
 } else {
   writeFileSync(readmePath, updated);
-  console.log(`Catalog updated with ${skills.length} skill(s).`);
+  console.log(`Catalog updated with ${plugins.length} plugin(s).`);
 }

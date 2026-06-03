@@ -1,49 +1,66 @@
 # pragmatic-skills
 
-A curated registry of skills for [Claude Code](https://claude.com/claude-code) and [OpenAI Codex CLI](https://github.com/openai/codex).
+A Claude Code [plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces) of small, sharp skills — with parallel [Codex CLI](https://github.com/openai/codex) prompts where it makes sense.
 
-Skills are reusable, model-invocable mini-programs: a slash command, a workflow, a domain expert, a deploy recipe. This repo is a single place to discover them and a shared format so one skill can target both agents.
+## Install (Claude Code)
 
-> [!NOTE]
-> This is a registry — not a hosting platform. Each entry is a manifest pointing to skill files (in-tree or in an upstream repo). Browse the [catalog](#catalog) below or open [`skills/`](./skills) directly.
-
-## Quick start
-
-**Install a skill manually:**
-
-```bash
-# Claude Code: copy the skill directory into your skills folder
-cp -r skills/<name>/claude-code ~/.claude/skills/<name>
-
-# Codex: copy the prompt file into your prompts folder
-cp skills/<name>/codex/prompt.md ~/.codex/prompts/<name>.md
+```
+/plugin marketplace add sapoepsilon/pragmatic-skills
+/plugin install pragmatic@pragmatic-skills          # the whole bundle
+# or pick just what you want:
+/plugin install muchotexto@pragmatic-skills
 ```
 
-**Submit a skill:** see [CONTRIBUTING.md](./CONTRIBUTING.md).
+Claude Code namespaces plugin skills as `/<plugin>:<skill>` — so `muchotexto` becomes `/muchotexto:muchotexto`, and the bundle exposes the same skill as `/pragmatic:muchotexto`. Both are also model-invoked when the description matches.
 
-## Why a shared format?
+## Install (Codex)
 
-Claude Code skills and Codex prompts both boil down to "instructions the agent loads on demand," but the surface details differ — frontmatter conventions, install locations, trigger semantics. The [skill format spec](./docs/skill-format.md) defines a single manifest that captures the metadata once, with per-agent entry files for anything truly agent-specific.
+Codex has no marketplace concept; each skill ships a standalone prompt at `plugins/<name>/codex/<name>.md`. Copy it into your prompts dir:
 
-A skill can declare support for one agent or both. The registry shows which.
+```bash
+SKILL=muchotexto
+mkdir -p ~/.codex/prompts
+cp plugins/$SKILL/codex/$SKILL.md ~/.codex/prompts/$SKILL.md
+```
+
+Then invoke as `/muchotexto` in Codex.
 
 ## Catalog
 
-Auto-generated from `skills/*/manifest.yml`. Submissions welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md).
+Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 <!-- CATALOG:START -->
-| Skill | Description | Targets | Tags |
+| Plugin | Description | Targets | Tags |
 | --- | --- | --- | --- |
-| [`muchotexto`](./skills/muchotexto) | Compress an answer to the tightest faithful length. Start at exactly one sentence and add a sentence only when the meaning would otherwise be lost. Works on the previous assistant turn or on a fresh question. | Claude Code, Codex | `brevity` `communication` `meta` |
+| [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto. | Claude Code | `bundle` `skills` |
+| [`muchotexto`](./plugins/muchotexto) | Compress responses to the tightest faithful length — exactly one sentence, expanding only when meaning would be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
 <!-- CATALOG:END -->
+
+## Repo layout
+
+```
+.claude-plugin/marketplace.json     # marketplace catalog (Claude Code reads this)
+plugins/
+  pragmatic/                         # bundle plugin — installs every skill
+    .claude-plugin/plugin.json
+    skills/<skill>/SKILL.md         # copies kept in sync with individual plugins
+  <skill>/                           # one plugin per skill
+    .claude-plugin/plugin.json
+    skills/<skill>/SKILL.md         # canonical SKILL.md
+    codex/<skill>.md                # optional Codex prompt
+    README.md
+schema/                              # JSON schemas for plugin.json / marketplace.json
+scripts/                             # validation, catalog, bundle sync
+docs/
+```
 
 ## Docs
 
-- [Skill format spec](./docs/skill-format.md) — the shared manifest and directory layout
-- [Claude Code integration](./docs/claude-code.md) — how skills load in Claude Code
-- [Codex integration](./docs/codex.md) — how skills load in Codex CLI
+- [Skill format spec](./docs/skill-format.md) — directory layout, manifests, the bundle/individual split
+- [Claude Code integration](./docs/claude-code.md) — how marketplace install + skills work
+- [Codex integration](./docs/codex.md) — per-skill prompt install
 - [Contributing](./CONTRIBUTING.md) — submission process, review criteria
 
 ## License
 
-MIT. Individual skills may declare their own license in their manifest; check before redistributing.
+MIT. Individual plugins may declare their own license in `plugin.json`; check before redistributing.

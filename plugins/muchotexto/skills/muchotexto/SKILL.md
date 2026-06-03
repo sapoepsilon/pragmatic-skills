@@ -1,5 +1,4 @@
 ---
-name: muchotexto
 description: Compress a response to the tightest faithful length — exactly one sentence, with permission to add another only when meaning would otherwise be lost. Use when the user says "muchotexto", "mucho texto", "too long", "tldr", "shorter", "tighter", "one sentence", or otherwise signals the previous response was bloated, or when the user wants a tight first-time answer to their current question. Picks between compressing the previous assistant turn or the current request based on conversation state.
 ---
 

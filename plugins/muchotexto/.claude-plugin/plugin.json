@@ -1,0 +1,12 @@
+{
+  "name": "muchotexto",
+  "description": "Compress responses to the tightest faithful length — exactly one sentence, expanding only when meaning would be lost.",
+  "version": "0.1.0",
+  "author": {
+    "name": "sapoepsilon"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/muchotexto",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["brevity", "communication", "meta", "tldr"]
+}

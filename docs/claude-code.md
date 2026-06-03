@@ -1,30 +1,46 @@
 # Claude Code integration
 
-Claude Code loads skills from `~/.claude/skills/<name>/SKILL.md` (user-level) or `<project>/.claude/skills/<name>/SKILL.md` (project-level). Plugin-installed skills appear under `~/.claude/plugins/<plugin>/skills/<name>/`.
+This repo is a Claude Code [plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces). Add it once, then install individual plugins or the bundle.
 
-## Installing a skill from this registry
+## Install
 
-Pick a skill from [`skills/`](../skills), then copy the Claude Code entry directory:
-
-```bash
-SKILL=my-skill
-mkdir -p ~/.claude/skills/$SKILL
-cp -R skills/$SKILL/claude-code/* ~/.claude/skills/$SKILL/
+```
+/plugin marketplace add sapoepsilon/pragmatic-skills
+/plugin install pragmatic@pragmatic-skills
 ```
 
-Restart Claude Code (or run `/help` to confirm the skill appears in the list).
+Or, for a single skill:
+
+```
+/plugin install muchotexto@pragmatic-skills
+```
+
+After install, Claude Code copies the plugin into its cache at `~/.claude/plugins/cache/`. Updates arrive automatically; you can force a refresh with `/plugin marketplace update`.
 
 ## How invocation works
 
-Claude Code surfaces installed skills in its system prompt and invokes them via its `Skill` tool when the user's request matches the skill's `description` and `trigger_keywords`. Skills are not auto-executing — they're advisory instructions the agent loads when relevant.
+Skills inside a plugin are **namespaced** as `/<plugin>:<skill>`. So:
+
+- `muchotexto` plugin → `/muchotexto:muchotexto`
+- `pragmatic` bundle → `/pragmatic:muchotexto`, `/pragmatic:<other-skill>`, ...
+
+Skills are also model-invoked when the user's intent matches the `description` field in `SKILL.md` — no slash command needed. The bundle and the individual plugin both expose the same skill content; install whichever you prefer, but **don't install both** — Claude Code will warn about the duplicate skill name.
+
+## Bundle vs. individual
+
+| Want                        | Install                                   |
+| --------------------------- | ----------------------------------------- |
+| Everything in this registry | `pragmatic@pragmatic-skills`              |
+| A specific skill            | `<skill-name>@pragmatic-skills`           |
+| A subset of two or three    | Multiple individual plugins               |
+
+The bundle is mostly a convenience — it's the same SKILL.md files re-shipped under one plugin namespace.
 
 ## Authoring tips
 
-- **Write the description for retrieval, not branding.** The model picks skills by matching the user's intent to the description. "Create a conventional-commit message from staged changes" beats "MyTool: the best commit helper."
-- **Front-load triggers.** Mention the verbs/nouns a user would actually say.
-- **Keep `SKILL.md` short.** Long skills get diluted in context. If you need detail, put it in a sibling file (`reference.md`) and reference it conditionally from `SKILL.md`.
-- **Test in a real session.** Install the skill, ask the agent something it should trigger on, and check whether it picks the skill up.
+- **Write the `description` for retrieval, not branding.** The model picks skills by matching user intent to the description. Be specific about triggers.
+- **Don't put a `name` field in the SKILL.md frontmatter.** The directory name is the skill name; an extra `name` is redundant.
+- **Keep `SKILL.md` short.** Push details into sibling files in the same `skills/<name>/` directory and reference them conditionally.
+- **Test with `--plugin-dir` before submitting.** `claude --plugin-dir ./plugins/<name>` loads your plugin without going through the marketplace install path.
 
-## Plugin skills vs. user skills
-
-This registry distributes plain user skills — drop-in directories, no plugin manifest. If you want your skill bundled with hooks, slash commands, and MCP servers, publish it as a [Claude Code plugin](https://claude.com/claude-code) separately and link to it from your skill's `repository` field.
+For the broader Claude Code skill authoring guide, see [docs.claude.com → Skills](https://code.claude.com/docs/en/skills).

@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "validate": "node scripts/validate.mjs",
-    "catalog": "node scripts/generate-catalog.mjs"
+    "catalog": "node scripts/generate-catalog.mjs",
+    "sync": "node scripts/sync-bundle.mjs"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

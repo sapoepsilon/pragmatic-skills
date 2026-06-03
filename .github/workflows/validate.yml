@@ -3,7 +3,8 @@ name: validate
 on:
   pull_request:
     paths:
-      - "skills/**"
+      - "plugins/**"
+      - ".claude-plugin/**"
       - "schema/**"
       - "scripts/**"
       - "package.json"
@@ -21,7 +22,15 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm install --no-audit --no-fund
-      - run: npm run validate
+      - name: Validate plugin + marketplace manifests
+        run: npm run validate
+      - name: Verify bundle is in sync
+        run: |
+          npm run sync
+          if ! git diff --exit-code plugins/pragmatic; then
+            echo "::error::Bundle is out of sync with canonical skills. Run 'npm run sync' and commit."
+            exit 1
+          fi
       - name: Verify catalog is up to date
         run: |
           npm run catalog

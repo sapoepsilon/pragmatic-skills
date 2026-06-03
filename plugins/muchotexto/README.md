@@ -33,19 +33,23 @@ Most uses should land at 1–3 sentences. Past 5 usually means the agent misunde
 
 ## Install
 
-**Claude Code:**
+**Claude Code** (via marketplace):
 
-```bash
-mkdir -p ~/.claude/skills/muchotexto
-cp -R skills/muchotexto/claude-code/* ~/.claude/skills/muchotexto/
+```
+/plugin marketplace add sapoepsilon/pragmatic-skills
+/plugin install muchotexto@pragmatic-skills
 ```
 
-**Codex:**
+Invoke as `/muchotexto:muchotexto`, or just say "muchotexto" / "tldr" / "too long" — the model auto-invokes when the description matches.
+
+**Codex** (manual copy):
 
 ```bash
 mkdir -p ~/.codex/prompts
-cp skills/muchotexto/codex/prompt.md ~/.codex/prompts/muchotexto.md
+cp plugins/muchotexto/codex/muchotexto.md ~/.codex/prompts/muchotexto.md
 ```
+
+Then invoke as `/muchotexto` in Codex.
 
 ## Examples
 

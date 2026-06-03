@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "pragmatic-skills",
+  "description": "Curated skills for Claude Code, with parallel Codex prompts where applicable.",
+  "owner": {
+    "name": "sapoepsilon"
+  },
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "pragmatic",
+      "source": "./pragmatic",
+      "description": "Bundle of all pragmatic-skills. Install once to get everything.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "bundles",
+      "tags": ["bundle"]
+    },
+    {
+      "name": "muchotexto",
+      "source": "./muchotexto",
+      "description": "Compress responses to the tightest faithful length — exactly one sentence, expanding only when meaning would be lost.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "communication",
+      "tags": ["brevity", "tldr", "meta"]
+    }
+  ]
+}

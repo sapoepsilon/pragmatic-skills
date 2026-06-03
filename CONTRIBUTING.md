@@ -1,6 +1,6 @@
 # Contributing a skill
 
-Thanks for wanting to share a skill. This guide covers what a skill is, how to package it, and how to get it merged.
+Thanks for wanting to share a skill. This guide covers what a skill is, how to package it for both Claude Code and Codex, and how to get it merged.
 
 ## What belongs here
 
@@ -15,67 +15,63 @@ Not a good fit:
 
 - One-off prompts you'd write inline (skills carry overhead — they only pay off if reused)
 - Wholesale agent system prompts (those belong in `CLAUDE.md` / `AGENTS.md` in a user's repo)
-- Anything that requires unreviewed network calls without flagging it in the manifest
+- Anything that requires unreviewed network calls or hidden state
 
 ## Directory layout
 
-Each skill is one directory under [`skills/`](../skills) with this shape:
+Each skill is one plugin under [`plugins/`](../plugins). For a skill named `my-skill`:
 
 ```
-skills/<skill-name>/
-├── manifest.yml              # required — metadata and compatibility
-├── README.md                 # required — what it does, how to use it
-├── claude-code/
-│   └── SKILL.md              # required if compatibility.claude_code.supported
-└── codex/
-    └── prompt.md             # required if compatibility.codex.supported
+plugins/my-skill/
+├── .claude-plugin/
+│   └── plugin.json          # required
+├── skills/
+│   └── my-skill/
+│       └── SKILL.md         # required — Claude Code skill body
+├── codex/
+│   └── my-skill.md          # optional — Codex prompt
+└── README.md                # required — install + usage
 ```
 
-`<skill-name>` must be lowercase kebab-case, match `^[a-z][a-z0-9-]{1,38}[a-z0-9]$`, and be unique in the registry.
+`my-skill` must match `^[a-z][a-z0-9-]{1,38}[a-z0-9]$`, be unique in the registry, and appear identically in three places: the plugin directory name, `plugin.json`'s `name`, and the inner `skills/<name>/` directory.
 
-## Manifest
+## `plugin.json` minimum
 
-The full schema lives at [`schema/skill.schema.json`](../schema/skill.schema.json). Minimum viable manifest:
-
-```yaml
-name: my-skill
-description: One-line description that surfaces in the catalog.
-version: 0.1.0
-license: MIT
-authors:
-  - github: your-handle
-tags:
-  - git
-  - workflow
-compatibility:
-  claude_code:
-    supported: true
-    entry: claude-code/SKILL.md
-  codex:
-    supported: true
-    entry: codex/prompt.md
+```json
+{
+  "name": "my-skill",
+  "description": "One-line summary. Used in the catalog and for retrieval.",
+  "version": "0.1.0",
+  "author": { "name": "your-github-handle" },
+  "license": "MIT",
+  "keywords": ["tag-one", "tag-two"]
+}
 ```
 
-See [`docs/skill-format.md`](./docs/skill-format.md) for every field.
+See [`docs/skill-format.md`](./docs/skill-format.md) for the full spec.
 
 ## Submitting
 
 1. Fork the repo and create a branch: `add/<skill-name>`.
-2. Add your skill under `skills/<skill-name>/`.
-3. Run `npm run validate` locally to check your manifest against the schema. (You can also wait for CI — the same validation runs on PRs.)
-4. Open a PR. The title should be `add: <skill-name> — <one-line description>`.
-5. CI will validate the manifest. A maintainer reviews for fit and quality.
+2. Add your plugin under `plugins/<skill-name>/`.
+3. Add a corresponding entry to `.claude-plugin/marketplace.json`. Match `name`, `version`, and `description`.
+4. Run `npm run sync` to refresh the `pragmatic` bundle with your new skill.
+5. Run `npm run catalog` to update the README table.
+6. Run `npm run validate` locally — schema check, file existence, bundle parity.
+7. Open a PR titled `add: <skill-name> — <one-line description>`.
+
+CI runs the same `validate` and `catalog` checks; PRs with drift fail loudly.
 
 ## Review criteria
 
 A maintainer will look at:
 
 - **Scope** — is the skill focused on one job?
-- **Trigger clarity** — does the description make it obvious when the agent should invoke it?
-- **Safety** — does it shell out, hit the network, or modify state? If so, is that documented in the README and the manifest's `permissions` field?
-- **Portability** — if it claims to support both agents, does each entry file actually work in that agent's environment?
+- **Trigger clarity** — does `plugin.json`'s `description` and `SKILL.md`'s frontmatter make it obvious when the agent should invoke it?
+- **Safety** — does it shell out, hit the network, or modify state? Document that in the skill's README and add appropriate warnings in the SKILL.md.
+- **Portability** — if you shipped a `codex/` prompt, does it actually work in Codex? (Codex prompts are user-invoked, so they read differently than `SKILL.md`.)
 - **Originality** — duplicates of existing skills get merged into the original or rejected with feedback.
 
 ## License
 
-By contributing, you agree your submission is licensed under the MIT License (the repo's default) unless your manifest declares a different OSI-approved license. Skills with non-OSI licenses or "all rights reserved" won't be accepted.
+By contributing, you agree your plugin is licensed under the MIT License (the repo's default) unless your `plugin.json` declares a different OSI-approved license. Plugins with non-OSI licenses or "all rights reserved" won't be accepted.
