@@ -1,0 +1,12 @@
+{
+  "name": "vault-session",
+  "description": "Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume to summarize where you left off and /save to write a session log, with first-run bootstrap that registers the vault MCP on each new machine.",
+  "version": "0.1.0",
+  "author": {
+    "name": "sapoepsilon"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/vault-session",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["obsidian", "vault", "memory", "session", "mcp", "resume", "save"]
+}
