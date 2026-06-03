@@ -28,12 +28,9 @@ if (!existsSync(marketplacePath)) {
       fail("marketplace.json", `${e.instancePath || "/"} ${e.message}`);
   }
 
-  const declaredPluginDirs = new Set();
   for (const p of marketplace.plugins ?? []) {
     if (typeof p.source === "string") {
-      const base = marketplace.metadata?.pluginRoot ?? ".";
-      const resolved = resolve(root, base, p.source.replace(/^\.\//, ""));
-      declaredPluginDirs.add(resolved);
+      const resolved = resolve(root, p.source);
       if (!existsSync(resolved)) {
         fail(`marketplace.json:${p.name}`, `source path does not exist: ${p.source}`);
       }
