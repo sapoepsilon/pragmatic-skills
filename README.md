@@ -33,7 +33,7 @@ Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welc
 | Plugin | Description | Targets | Tags |
 | --- | --- | --- | --- |
 | [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save). | Claude Code | `bundle` `skills` |
-| [`muchotexto`](./plugins/muchotexto) | Compress responses to the tightest faithful length — exactly one sentence, expanding only when meaning would be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
+| [`muchotexto`](./plugins/muchotexto) | Answer in the minimum sentences that carry the meaning. Start at one and proactively grow by +1 only when a fact, caveat, or step would otherwise be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
 | [`vault-session`](./plugins/vault-session) | Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume to summarize where you left off and /save to write a session log, with first-run bootstrap that registers the vault MCP on each new machine. | Claude Code | `obsidian` `vault` `memory` `session` `mcp` `resume` `save` |
 <!-- CATALOG:END -->
 

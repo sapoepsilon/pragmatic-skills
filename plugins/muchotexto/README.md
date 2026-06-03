@@ -2,7 +2,7 @@
 
 > "¡Mucho texto!" — when the answer was way longer than the question deserved.
 
-A skill that forces an answer down to the tightest faithful length: **exactly one sentence**, with permission to add another sentence only when meaning would otherwise be lost. Then another. The ceiling is whatever it takes to be honest; the floor is one.
+A skill that drives an answer toward the minimum number of sentences that still carries the meaning. **One is the floor and the target.** Growing the answer is a proactive, deliberate `+1` — only when a sentence would otherwise drop a fact, caveat, or step the reader actually needs. Never pad. Never stop short.
 
 ## Two modes
 
@@ -11,17 +11,17 @@ A skill that forces an answer down to the tightest faithful length: **exactly on
 
 The skill picks mode 1 if there's a prior assistant message to compress and mode 2 otherwise.
 
-## The procedure (what the agent runs internally)
+## The proactive +1 loop (what the agent runs internally)
 
-1. Draft in **exactly one sentence**.
+1. Draft in **exactly one sentence** — even if the topic feels complex. Try one first.
 2. Read it. Would a careful reader recover the original meaning? Specifically — is any of this dropped?
    - A core claim the user needs to act on
    - A non-obvious caveat that changes the recommendation
    - A required step in a procedure
-3. If yes: add **one** more sentence. Re-check.
-4. Stop the moment the answer is faithful.
+3. If yes: add **one** more sentence — the smallest addition that restores faithfulness. Re-run step 2.
+4. Stop the moment the answer is faithful. Not before. Not after.
 
-Most uses should land at 1–3 sentences. Past 5 usually means the agent misunderstood what to compress.
+Every +1 must be earned by a specific dropped element the agent can name. Vague "more would be better" doesn't qualify. Most uses land at 1–3 sentences; past 5 usually means the agent misunderstood what to compress.
 
 ## Hard rules
 
