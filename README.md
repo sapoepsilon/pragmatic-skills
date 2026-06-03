@@ -29,10 +29,12 @@ A skill can declare support for one agent or both. The registry shows which.
 
 ## Catalog
 
-> The catalog is empty on launch. Submissions welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md).
+Auto-generated from `skills/*/manifest.yml`. Submissions welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 <!-- CATALOG:START -->
-_No skills published yet._
+| Skill | Description | Targets | Tags |
+| --- | --- | --- | --- |
+| [`muchotexto`](./skills/muchotexto) | Compress an answer to the tightest faithful length. Start at exactly one sentence and add a sentence only when the meaning would otherwise be lost. Works on the previous assistant turn or on a fresh question. | Claude Code, Codex | `brevity` `communication` `meta` |
 <!-- CATALOG:END -->
 
 ## Docs
