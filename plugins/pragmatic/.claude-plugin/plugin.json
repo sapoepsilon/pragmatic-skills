@@ -1,7 +1,7 @@
 {
   "name": "pragmatic",
-  "description": "Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save).",
-  "version": "0.3.0",
+  "description": "Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session, and xquik-x-data.",
+  "version": "0.4.0",
   "author": {
     "name": "sapoepsilon"
   },

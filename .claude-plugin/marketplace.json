@@ -10,7 +10,7 @@
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
       "description": "Bundle of all pragmatic-skills. Install once to get everything.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
       "category": "bundles",
@@ -35,6 +35,16 @@
       "license": "MIT",
       "category": "memory",
       "tags": ["obsidian", "vault", "memory", "session", "mcp"]
+    },
+    {
+      "name": "xquik-x-data",
+      "source": "./plugins/xquik-x-data",
+      "description": "Use Xquik for X/Twitter data research, media, monitoring, webhooks, and confirmation-gated account actions with API-key safety.",
+      "version": "0.1.0",
+      "author": { "name": "Xquik-dev" },
+      "license": "MIT",
+      "category": "data",
+      "tags": ["x", "twitter", "social-data", "mcp", "api", "monitoring"]
     }
   ]
 }
