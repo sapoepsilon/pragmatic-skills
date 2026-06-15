@@ -10,7 +10,7 @@
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
       "description": "Bundle of all pragmatic-skills. Install once to get everything.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
       "category": "bundles",
@@ -35,6 +35,16 @@
       "license": "MIT",
       "category": "memory",
       "tags": ["obsidian", "vault", "memory", "session", "mcp"]
+    },
+    {
+      "name": "verify-to-e2e",
+      "source": "./plugins/verify-to-e2e",
+      "description": "Verify a feature by driving the real running app (simulator/emulator/browser/CLI), then codify that exact check into a reusable end-to-end test wired into the project's test harness.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "testing",
+      "tags": ["testing", "e2e", "verification", "mcp", "qa"]
     }
   ]
 }
