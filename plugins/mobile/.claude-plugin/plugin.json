@@ -1,0 +1,10 @@
+{
+  "name": "mobile",
+  "description": "Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator, using a headless agent (Droid) on your own subscription proxy. Each stage is its own skill; environment is dev-configured per machine/project and never committed.",
+  "version": "0.0.1",
+  "author": { "name": "sapoepsilon" },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["mobile", "autoship", "agent", "droid", "qa", "e2e", "ci"]
+}
