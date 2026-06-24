@@ -37,14 +37,14 @@
       "tags": ["obsidian", "vault", "memory", "session", "mcp"]
     },
     {
-      "name": "verify-to-e2e",
-      "source": "./plugins/verify-to-e2e",
-      "description": "Verify a feature by driving the real running app (simulator/emulator/browser/CLI), then codify that exact check into a reusable end-to-end test wired into the project's test harness.",
-      "version": "0.1.0",
+      "name": "mobile",
+      "source": "./plugins/mobile",
+      "description": "Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator using a headless agent (Droid) on your own subscription proxy. Each stage is its own skill; includes verify-to-e2e. Environment is dev-configured per machine/project and never committed.",
+      "version": "0.0.1",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
-      "category": "testing",
-      "tags": ["testing", "e2e", "verification", "mcp", "qa"]
+      "category": "automation",
+      "tags": ["mobile", "autoship", "agent", "qa", "e2e", "ci"]
     }
   ]
 }
