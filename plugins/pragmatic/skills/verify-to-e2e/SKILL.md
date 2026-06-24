@@ -1,4 +1,5 @@
 ---
+name: verify-to-e2e
 description: Verify a new or changed feature by driving the real running app (iOS/Android simulator, browser, CLI, or API) via MCP or the project's own automation, then codify that exact check into a reusable end-to-end test wired into the project's existing test harness. Use after building something you were asked to "verify" / "test in the simulator / app", or whenever you want to turn a manual walkthrough into a durable automated test. Works for any stack — mobile, web, desktop, backend. Recording the run is a separate concern; do not record here.
 ---
 
