@@ -33,9 +33,9 @@ Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welc
 | Plugin | Description | Targets | Tags |
 | --- | --- | --- | --- |
 | [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), verify-to-e2e. | Claude Code | `bundle` `skills` |
+| [`mobile`](./plugins/mobile) | Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator, using a headless agent (Droid) on your own subscription proxy. Each stage is its own skill; environment is dev-configured per machine/project and never committed. | Claude Code, Codex | `mobile` `autoship` `agent` `droid` `qa` `e2e` `ci` |
 | [`muchotexto`](./plugins/muchotexto) | Answer in the minimum sentences that carry the meaning. Start at one and proactively grow by +1 only when a fact, caveat, or step would otherwise be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
 | [`vault-session`](./plugins/vault-session) | Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume to summarize where you left off and /save to write a session log, with first-run bootstrap that registers the vault MCP on each new machine. | Claude Code | `obsidian` `vault` `memory` `session` `mcp` `resume` `save` |
-| [`verify-to-e2e`](./plugins/verify-to-e2e) | Verify a feature by driving the real running app (simulator/emulator/browser/CLI), then codify that exact check into a reusable end-to-end test wired into the project's test harness. | Claude Code, Codex | `testing` `e2e` `verification` `mcp` `qa` `integration-test` |
 <!-- CATALOG:END -->
 
 ## Repo layout
