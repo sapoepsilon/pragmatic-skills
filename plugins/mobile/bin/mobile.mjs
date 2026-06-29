@@ -8,7 +8,8 @@
 //   project local (env, NEVER committed):         <repo>/.mobileship.local.json
 //     backend URL, machine/device overrides, anything environment-specific.
 // Commands: probe | init [dir] | show
-// Orchestrator (state machine, droid driver, channel, QA loop) lands in later slices.
+// Orchestrator (state machine, channel, QA loop) lands in later slices. The
+// orchestrating agent (Hermes / Claude Code) is the coder — no external engine CLI.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -50,14 +51,6 @@ function has(cmd) {
   }
 }
 
-function cmdVersion(cmd) {
-  try {
-    return execSync(`${cmd} --version`, { encoding: "utf8" }).trim().split("\n")[0];
-  } catch {
-    return "?";
-  }
-}
-
 async function probe() {
   const machine = readJson(MACHINE_PATH);
   const line = (ok, label, detail = "") => `  ${ok ? "✓" : "✗"} ${label}${detail ? ` — ${detail}` : ""}`;
@@ -66,15 +59,7 @@ async function probe() {
   console.log(`machine config: ${existsSync(MACHINE_PATH) ? MACHINE_PATH : "(none — run the mobile-setup skill)"}`);
 
   console.log("\nengine:");
-  console.log(line(has("droid"), "droid CLI", has("droid") ? cmdVersion("droid") : "not installed → brew install --cask droid"));
-
-  console.log("\nproxy endpoints:");
-  const endpoints = machine?.proxy?.endpoints ?? [];
-  if (endpoints.length === 0) console.log("  ✗ none configured");
-  for (const ep of endpoints) {
-    const ok = await reachable(ep, machine?.proxy?.apiKey);
-    console.log(line(ok, ep, ok ? "serving" : "unreachable"));
-  }
+  console.log(line(true, "coder", "the orchestrating agent (Hermes / Claude Code) — no external CLI"));
 
   console.log("\ndevice / QA targets:");
   const isMac = platform() === "darwin";
@@ -102,7 +87,6 @@ function init(dir = ".") {
   // Committed: shareable, no secrets, no environment specifics.
   writeJson(committed, {
     name: "",
-    engine: { tool: "droid", model: "" },
     build: "",
     qa: { script: "", device: "android" },
     branchPrefix: "autoship/",

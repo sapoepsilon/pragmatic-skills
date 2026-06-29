@@ -1,6 +1,6 @@
 # mobile
 
-Mobile **auto-shipper**. Drive a chat request through **analyze → implement → QA → PR** on a real simulator/emulator, using a headless coding agent (Droid) running on your **own subscription** via a local proxy — no extra API credits.
+Mobile **auto-shipper**. Drive a chat request through **analyze → implement → QA → PR** on a real simulator/emulator. The orchestrating agent (Hermes / Claude Code) is the coder — it writes the change itself; there is no separate engine CLI.
 
 Status: **early**. Setup + machine probe + the stage skills are in. The deterministic orchestrator (run-state, gates, channel, loop driver) lands in later slices.
 
@@ -12,7 +12,7 @@ request ─► mobile-analyze ─►(green light)─► mobile-implement ⇄ mob
 ```
 
 - **`mobile-analyze`** — loop over Linear / Fireflies / codebase / screenshots / any MCP context source → confirm intent with the dev.
-- **`mobile-implement`** — loop `droid exec` on a branch until it builds and matches intent.
+- **`mobile-implement`** — write the change yourself on a branch until it builds and matches intent.
 - **`mobile-qa`** — drive the real app on iOS sim / Android emulator MCP / adb / Figma bridge against a non-prod backend, record, verify.
 - **`verify-to-e2e`** — codify a manual verification into a durable e2e test (lives here now).
 - **`mobile-setup`** — per-machine + per-project config + a preflight that proves the pipeline works against *this* repo.
@@ -21,9 +21,8 @@ Any stage that gets stuck bounces back with a prompt: qa→implement, implement�
 
 ## Assumptions (the developer owns the environment; setup only checks)
 
-- A **proxy** (CLIProxyAPI / VibeProxy) exposing your subscription at `…:8317/v1`.
-- **Droid** installed, model pointed at the proxy.
 - A **device target**: iOS simulator (macOS) and/or an Android emulator-control MCP. Optionally the Figma MCP bridge (macOS only).
+- A **non-prod backend** with migrations applied for QA to drive against.
 
 Missing anything → `mobile-setup` tells you what to install; it never installs for you.
 
@@ -31,7 +30,7 @@ Missing anything → `mobile-setup` tells you what to install; it never installs
 
 | File | Committed | Holds |
 |---|---|---|
-| `~/.config/mobile-autoship/machine.json` | no | proxy endpoints + key, device targets |
+| `~/.config/mobile-autoship/machine.json` | no | device targets |
 | `<repo>/.mobileship.json` | yes | build cmd, qa script, channel type, branch prefix |
 | `<repo>/.mobileship.local.json` | **no** (gitignore) | backend URL, device overrides, chat id |
 

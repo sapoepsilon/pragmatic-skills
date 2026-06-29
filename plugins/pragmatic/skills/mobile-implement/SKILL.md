@@ -1,23 +1,19 @@
 ---
 name: mobile-implement
-description: Stage 2 of the mobile auto-shipper — implement. Loop the headless agent (Droid) to build the confirmed change on a branch until it compiles and matches intent, then hand off to QA. Use after mobile-analyze has a green-lit intent, or when mobile-qa bounces a failure back here to fix.
+description: Stage 2 of the mobile auto-shipper — implement. Write the confirmed change yourself on a dedicated branch until it compiles and matches intent, then hand off to QA. Use after mobile-analyze has a green-lit intent, or when mobile-qa bounces a failure back here to fix.
 ---
 
 # mobile: implement (stage 2 of 3)
 
-Goal: realize the **confirmed intent** from stage 1 as working, building code on a dedicated branch, then hand to QA. This stage drives the engine (`droid exec`); it does not decide *what* to build — that came from analyze.
+Goal: realize the **confirmed intent** from stage 1 as working, building code on a dedicated branch, then hand to QA. **You are the coder** — you edit the files with your own tools. This stage does not decide *what* to build — that came from analyze.
 
 ## Loop
 
 1. Ensure a branch exists: `<branchPrefix><short-slug>` (from `.mobileship.json`). Never work on the default branch.
-2. Drive the engine with the intent:
-   ```
-   droid exec -m <engine.model> --auto medium "<intent + acceptance from run-state>"
-   ```
-   Use the model from `.mobileship.json` (a proxy model — runs on the subscription). Stream output; relay progress to the channel.
-3. **Build** with the project's `build` command. If it fails, feed the error back to the engine and loop.
+2. **Edit the code yourself** to realize the intent + acceptance criteria from run-state. Follow the repo's conventions (read its `CLAUDE.md`/`AGENTS.md`). Keep the diff scoped to the confirmed intent; relay progress to the channel.
+3. **Build** with the project's `build` command. If it fails, read the analyzer/compile error, fix it, and loop.
 4. Repeat until: build passes **and** the diff plausibly satisfies the confirmed intent.
-5. Respect the loop budget (max iterations / cost) — if exceeded, bounce, don't spin forever.
+5. Respect the loop budget (max iterations) — if you keep thrashing, stop and bounce rather than spin forever.
 
 ## Handoff contract
 
