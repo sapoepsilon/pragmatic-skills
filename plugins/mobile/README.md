@@ -16,6 +16,7 @@ request ─► mobile-analyze ─►(green light)─► mobile-implement ⇄ mob
 - **`mobile-qa`** — drive the real app on iOS sim / Android emulator MCP / adb / Figma bridge against a non-prod backend, record, verify.
 - **`verify-to-e2e`** — codify a manual verification into a durable e2e test (lives here now).
 - **`mobile-setup`** — per-machine + per-project config + a preflight that proves the pipeline works against *this* repo.
+- **`mobile-comprehensive-review`** — multi-agent end-to-end PR review: architecture pass, diff inspection, checks, real build, on-device verification against a non-prod backend, optional recorded evidence, PR-ready verdict.
 
 Any stage that gets stuck bounces back with a prompt: qa→implement, implement→analyze, analyze→dev.
 
