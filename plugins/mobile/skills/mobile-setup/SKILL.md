@@ -1,16 +1,13 @@
 ---
 name: mobile-setup
-description: Set up the mobile auto-shipper on this machine and in this project, then run a preflight that proves the pipeline works against the real repo. Use when the user says "set up mobile autoship", "mobile-setup", "configure autoship here", or wants Hermes/Droid mobile, backend, Supabase, and Flutter QA wiring. Probes engines, devices, backend/Supabase, writes config, and reports blockers.
+description: Set up the mobile auto-shipper on this machine and in this project, then run a preflight that proves the pipeline works against the real repo. Use when the user says "set up mobile autoship", "mobile-setup", "configure autoship here", or wants mobile, backend, Supabase, and Flutter QA wiring. Probes devices, backend/Supabase, writes config, and reports blockers. It NEVER installs anything — the developer owns the environment.
 ---
 
 # mobile: setup
 
-Configure the mobile auto-shipper and verify it works with *this* project. The skill supports two execution modes:
+Configure the mobile auto-shipper and verify it works with *this* project. The orchestrating agent is the coder and uses its tools directly (`terminal`, file tools, mobile MCP tools, GitHub/Linear/Fireflies/Sentry tools) — there is no separate engine CLI to configure.
 
-- **Hermes mode** — use Hermes tools directly (`terminal`, file tools, mobile MCP tools, GitHub/Linear/Fireflies/Sentry tools). This is the default when `engine.tool` is `hermes`.
-- **Droid mode** — use `droid exec` through a subscription proxy when `engine.tool` is `droid` and Droid/proxy are installed.
-
-Setup checks and records; it does not install global tools or write secrets into committed files.
+Setup checks and records; it does not install global tools or write secrets into committed files. If something is missing, say exactly what and stop — offer the install command, let the developer run it.
 
 Run the helper CLI as `node ${CLAUDE_PLUGIN_ROOT}/bin/mobile.mjs <cmd>` inside Claude Code, or install/call the same script as `mobile-autoship` in Hermes.
 
@@ -18,7 +15,7 @@ Run the helper CLI as `node ${CLAUDE_PLUGIN_ROOT}/bin/mobile.mjs <cmd>` inside C
 
 | Tier | File | Committed? | Holds |
 |---|---|---|---|
-| Machine | `~/.config/mobile-autoship/machine.json` | **No** | engine preference, optional proxy endpoints/key, device targets, shared staging endpoints |
+| Machine | `~/.config/mobile-autoship/machine.json` | **No** | device targets, shared staging endpoints |
 | Project shared | `<repo>/.mobileship.json` | Yes, intentionally | repo type, build/test/QA commands, branch prefix, channel type |
 | Project local | `<repo>/.mobileship.local.json` | **No** (gitignored) | backend/Supabase URLs, device serials, chat IDs, environment-specific overrides |
 
@@ -31,7 +28,6 @@ Always add `.mobileship.local.json` to `.gitignore`.
 2. Fill `~/.config/mobile-autoship/machine.json` with non-committed host facts. Generic Hermes shape:
    ```json
    {
-     "engine": { "tool": "hermes", "optionalEngines": ["droid", "opencode", "claude", "codex"] },
      "devices": {
        "android": { "type": "adb", "defaultSerial": "emulator-5554", "physicalPixelSerial": "100.114.162.40:5555" },
        "figma": { "enabled": false, "note": "Figma MCP bridge is macOS-only" }
@@ -48,7 +44,7 @@ Always add `.mobileship.local.json` to `.gitignore`.
      }
    }
    ```
-3. Run probe again. Missing optional engines are OK in Hermes mode; missing selected engine, device, backend, or Supabase must be reported with the exact remedy.
+3. Run probe again. Missing device, backend, or Supabase targets must be reported with the exact remedy (e.g. "Android emulator not running → start `emulator-5554`").
 
 ## Tier 2 — project
 
@@ -73,7 +69,6 @@ Before declaring setup done, prove the actual repo works:
 4. **Backend reachable and non-prod** — health endpoint succeeds and URL does not look production.
 5. **Supabase reachable and non-prod** — `/auth/v1/health` or `/rest/v1/` succeeds.
 6. **GitHub auth works** — `gh auth status` or equivalent is available for PR creation.
-7. **Optional engine check** — if `engine.tool=droid`, `droid exec -m <model> "reply OK"` must work; if `engine.tool=hermes`, missing Droid is not a blocker.
 
 ## Kentra known-good references
 
@@ -94,6 +89,6 @@ Before declaring setup done, prove the actual repo works:
 ## Guardrails
 
 - Never run preflight or QA against production.
-- Never write secrets or proxy keys into `.mobileship.json`.
+- Never write secrets into `.mobileship.json` — they live in `machine.json` / `.mobileship.local.json`.
 - Never reset staging/Supabase without explicit approval.
 - Missing precondition → report the exact missing piece and remedy; do not silently degrade from Pixel to emulator or from integrated QA to static inspection.

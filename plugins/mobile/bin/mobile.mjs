@@ -2,12 +2,13 @@
 // mobile auto-shipper CLI — setup + probe.
 // Config tiers:
 //   machine (secrets, NEVER committed): ~/.config/mobile-autoship/machine.json
-//     engine choice, optional proxy endpoints + key, device targets, shared staging endpoints.
+//     device targets, shared staging endpoints.
 //   project committed (shareable, no secrets):   <repo>/.mobileship.json
 //     repo type, build/test/qa commands, branch prefix, channel type.
 //   project local (env, NEVER committed):         <repo>/.mobileship.local.json
 //     backend/Supabase URLs, machine/device overrides, chat id, anything environment-specific.
 // Commands: probe | init [dir] [--preset <name>] | show
+// The orchestrating agent (Hermes / Claude Code) is the coder — no external engine CLI.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -80,14 +81,6 @@ function has(cmd) {
   }
 }
 
-function cmdVersion(cmd) {
-  try {
-    return execSync(`${cmd} --version`, { encoding: "utf8" }).trim().split("\n")[0];
-  } catch {
-    return "?";
-  }
-}
-
 function shellOut(command) {
   try {
     return execSync(command, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
@@ -121,7 +114,6 @@ async function probe() {
   const machine = readJson(MACHINE_PATH);
   const project = readJson(resolve(PROJECT_FILE));
   const local = readJson(resolve(PROJECT_LOCAL_FILE));
-  const engine = project?.engine?.tool || machine?.engine?.tool || machine?.engine || "droid";
   const line = (ok, label, detail = "") => `  ${ok ? "✓" : "✗"} ${label}${detail ? ` — ${detail}` : ""}`;
 
   console.log(`mobile-autoship probe — ${platform()} @ ${homedir()}`);
@@ -130,19 +122,7 @@ async function probe() {
   console.log(`project local: ${existsSync(resolve(PROJECT_LOCAL_FILE)) ? resolve(PROJECT_LOCAL_FILE) : "(none in cwd)"}`);
 
   console.log("\nengine:");
-  console.log(line(engine === "hermes" || has("hermes"), "Hermes Agent", engine === "hermes" ? "selected" : has("hermes") ? "available" : "not selected"));
-  console.log(line(has("droid"), "droid CLI", has("droid") ? cmdVersion("droid") : engine === "droid" ? "missing; required for engine.tool=droid" : "optional"));
-  console.log(line(has("opencode"), "opencode CLI", has("opencode") ? cmdVersion("opencode") : "optional"));
-  console.log(line(has("claude"), "claude CLI", has("claude") ? cmdVersion("claude") : "optional"));
-  console.log(line(has("codex"), "codex CLI", has("codex") ? cmdVersion("codex") : "optional"));
-
-  console.log("\nproxy endpoints:");
-  const endpoints = machine?.proxy?.endpoints ?? [];
-  if (endpoints.length === 0) console.log(engine === "hermes" ? "  - none configured (fine for engine.tool=hermes)" : "  ✗ none configured");
-  for (const ep of endpoints) {
-    const result = await reachableOpenAI(ep, machine?.proxy?.apiKey);
-    console.log(line(result.ok, ep, result.ok ? "serving /models" : `unreachable (${result.status})`));
-  }
+  console.log(line(true, "coder", "the orchestrating agent (Hermes / Claude Code) — no external CLI"));
 
   console.log("\ndevice / QA targets:");
   const isMac = platform() === "darwin";
@@ -187,7 +167,6 @@ const PRESETS = {
   generic: {
     shared: {
       name: "",
-      engine: { tool: "droid", model: "" },
       build: "",
       test: "",
       qa: { script: "", device: "android" },
@@ -204,7 +183,6 @@ const PRESETS = {
   hermes: {
     shared: {
       name: "",
-      engine: { tool: "hermes" },
       build: "",
       test: "",
       qa: { script: "", device: "android" },
@@ -222,7 +200,6 @@ const PRESETS = {
     shared: {
       name: "kentra-mobile",
       type: "flutter-android",
-      engine: { tool: "hermes" },
       packageName: "com.kentra.app",
       build: "flutter pub get && dart run build_runner build --delete-conflicting-outputs && flutter build apk --debug",
       apk: "build/app/outputs/flutter-apk/app-debug.apk",
@@ -257,7 +234,6 @@ const PRESETS = {
     shared: {
       name: "kentra-backend",
       type: "node-express-api",
-      engine: { tool: "hermes" },
       build: "npm run lint && npm run test:unit -- --run",
       test: "npm run test:unit -- --run",
       lint: "npm run lint",

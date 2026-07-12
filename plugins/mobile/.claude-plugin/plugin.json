@@ -1,11 +1,11 @@
 {
   "name": "mobile",
-  "description": "Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device using Hermes tools directly or Droid through a subscription proxy. Includes backend/Supabase and Flutter QA setup.",
+  "description": "Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device. The orchestrating agent is the coder — no separate engine CLI. Includes backend/Supabase and Flutter QA setup.",
   "version": "0.1.0",
   "author": { "name": "sapoepsilon" },
   "license": "MIT",
   "homepage": "https://github.com/sapoepsilon/pragmatic-skills",
   "repository": "https://github.com/sapoepsilon/pragmatic-skills",
   "targets": ["Claude Code", "Codex", "Hermes"],
-  "keywords": ["mobile", "autoship", "agent", "droid", "qa", "e2e", "ci"]
+  "keywords": ["mobile", "autoship", "agent", "qa", "e2e", "ci"]
 }
