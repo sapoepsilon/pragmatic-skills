@@ -45,6 +45,16 @@
       "license": "MIT",
       "category": "automation",
       "tags": ["mobile", "autoship", "agent", "qa", "e2e", "ci"]
+    },
+    {
+      "name": "backend-comprehensive-review",
+      "source": "./plugins/backend-comprehensive-review",
+      "description": "Multi-agent end-to-end backend/API PR review: phased orchestrator with parallel review passes, real-request runtime verification against a project-configured non-prod target, and a PR-ready verdict. Auto-configures a per-repo review extension.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "code-review",
+      "tags": ["backend", "api", "code-review", "qa", "migrations", "e2e"]
     }
   ]
 }
