@@ -17,6 +17,8 @@ Skills in this bundle are also distributable as individual plugins - if you only
 | --- | --- |
 | [muchotexto](../muchotexto) | Compress responses to the tightest faithful length. |
 | [vault-session](../vault-session) | Save and resume Claude Code session notes through an Obsidian vault. |
+| [mobile](../mobile) | Mobile autoship stages (analyze → implement → QA), setup, verify-to-e2e, and mobile-comprehensive-review. |
+| [backend-comprehensive-review](../backend-comprehensive-review) | Multi-agent end-to-end backend/API PR review with runtime verification. |
 | [xquik-x-data](../xquik-x-data) | Use Xquik for X/Twitter data tasks with explicit consent and API-key safety. |
 
 ## Codex users

@@ -1,4 +1,5 @@
 ---
+name: muchotexto
 description: Answer in the minimum number of sentences that still carries the meaning. Start at exactly one and proactively grow by +1 whenever a fact, caveat, or required step would otherwise be lost — never pad, never stop short. Use when the user says "muchotexto", "mucho texto", "tldr", "too long", "shorter", "tighter", "one sentence", or otherwise signals brevity, either to compress the previous response or to get a tight first-time answer to a new question.
 ---
 

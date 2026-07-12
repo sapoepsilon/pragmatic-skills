@@ -1,0 +1,11 @@
+{
+  "name": "backend-comprehensive-review",
+  "description": "Multi-agent end-to-end backend/API PR review: phased orchestrator with parallel architecture, correctness, security/authorization, migrations, and test passes, real-request runtime verification against a project-configured non-prod target, and a PR-ready verdict. Auto-configures a per-repo review extension.",
+  "version": "0.1.0",
+  "author": { "name": "sapoepsilon" },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "targets": ["Claude Code", "Hermes"],
+  "keywords": ["backend", "api", "code-review", "qa", "migrations", "e2e", "subagents"]
+}
