@@ -35,8 +35,8 @@ if (plugins.length === 0) {
   block = "_No plugins published yet._";
 } else {
   const rows = plugins.map((p) => {
-    const targets = ["Claude Code"];
-    if (p._codex) targets.push("Codex");
+    const targets = Array.isArray(p.targets) && p.targets.length > 0 ? [...p.targets] : ["Claude Code"];
+    if (p._codex && !targets.includes("Codex")) targets.push("Codex");
     const tags = (p.keywords ?? []).map((t) => `\`${t}\``).join(" ");
     return `| [\`${p._dir}\`](./plugins/${p._dir}) | ${(p.description ?? "").replace(/\n+/g, " ")} | ${targets.join(", ")} | ${tags} |`;
   });

@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-// mobile auto-shipper CLI — setup + probe (Slice 1).
+// mobile auto-shipper CLI — setup + probe.
 // Config tiers:
 //   machine (secrets, NEVER committed): ~/.config/mobile-autoship/machine.json
-//     proxy endpoints + key, device targets (iOS sim, Android MCP, Figma MCP).
+//     device targets, shared staging endpoints.
 //   project committed (shareable, no secrets):   <repo>/.mobileship.json
-//     build cmd, qa script, channel type, branch prefix.
+//     repo type, build/test/qa commands, branch prefix, channel type.
 //   project local (env, NEVER committed):         <repo>/.mobileship.local.json
-//     backend URL, machine/device overrides, anything environment-specific.
-// Commands: probe | init [dir] | show
-// Orchestrator (state machine, channel, QA loop) lands in later slices. The
-// orchestrating agent (Hermes / Claude Code) is the coder — no external engine CLI.
+//     backend/Supabase URLs, machine/device overrides, chat id, anything environment-specific.
+// Commands: probe | init [dir] [--preset <name>] | show
+// The orchestrating agent (Hermes / Claude Code) is the coder — no external engine CLI.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -28,15 +27,46 @@ function writeJson(path, obj) {
   writeFileSync(path, JSON.stringify(obj, null, 2) + "\n");
 }
 
-async function reachable(url, apiKey, timeoutMs = 5000) {
+function mergeJson(path, defaults) {
+  const current = readJson(path) ?? {};
+  writeJson(path, deepMerge(defaults, current));
+}
+
+function deepMerge(base, override) {
+  if (!isObject(base) || !isObject(override)) return override ?? base;
+  const out = { ...base };
+  for (const [key, value] of Object.entries(override)) {
+    out[key] = isObject(value) && isObject(out[key]) ? deepMerge(out[key], value) : value;
+  }
+  return out;
+}
+
+function isObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value);
+}
+
+async function reachableOpenAI(url, apiKey, timeoutMs = 5000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
     const res = await fetch(`${url.replace(/\/$/, "")}/models`, { headers, signal: controller.signal });
-    return res.ok;
-  } catch {
-    return false;
+    return { ok: res.ok, status: res.status };
+  } catch (err) {
+    return { ok: false, status: err.name || "error" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function httpOk(url, timeoutMs = 5000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    return { ok: res.ok, status: res.status };
+  } catch (err) {
+    return { ok: false, status: err.name || "error" };
   } finally {
     clearTimeout(timer);
   }
@@ -51,12 +81,45 @@ function has(cmd) {
   }
 }
 
+function shellOut(command) {
+  try {
+    return execSync(command, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
+  } catch (err) {
+    return (err.stdout?.toString() || err.stderr?.toString() || "").trim();
+  }
+}
+
+function parseArgs(argv) {
+  const positional = [];
+  const flags = {};
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg.startsWith("--")) {
+      const key = arg.slice(2);
+      const next = argv[i + 1];
+      if (next && !next.startsWith("--")) {
+        flags[key] = next;
+        i += 1;
+      } else {
+        flags[key] = true;
+      }
+    } else {
+      positional.push(arg);
+    }
+  }
+  return { positional, flags };
+}
+
 async function probe() {
   const machine = readJson(MACHINE_PATH);
+  const project = readJson(resolve(PROJECT_FILE));
+  const local = readJson(resolve(PROJECT_LOCAL_FILE));
   const line = (ok, label, detail = "") => `  ${ok ? "✓" : "✗"} ${label}${detail ? ` — ${detail}` : ""}`;
 
   console.log(`mobile-autoship probe — ${platform()} @ ${homedir()}`);
   console.log(`machine config: ${existsSync(MACHINE_PATH) ? MACHINE_PATH : "(none — run the mobile-setup skill)"}`);
+  console.log(`project config: ${existsSync(resolve(PROJECT_FILE)) ? resolve(PROJECT_FILE) : "(none in cwd)"}`);
+  console.log(`project local: ${existsSync(resolve(PROJECT_LOCAL_FILE)) ? resolve(PROJECT_LOCAL_FILE) : "(none in cwd)"}`);
 
   console.log("\nengine:");
   console.log(line(true, "coder", "the orchestrating agent (Hermes / Claude Code) — no external CLI"));
@@ -64,45 +127,153 @@ async function probe() {
   console.log("\ndevice / QA targets:");
   const isMac = platform() === "darwin";
   console.log(line(isMac && has("xcrun"), "iOS simulator (local)", isMac ? "" : "macOS only"));
-  console.log(line(has("adb"), "adb (local Android)", has("adb") ? "" : "optional"));
-  const android = machine?.devices?.android;
+  console.log(line(has("adb"), "adb (local Android)", has("adb") ? "available" : "missing"));
+  if (has("adb")) console.log(shellOut("adb devices -l") || "(adb returned no devices)");
+  const android = local?.deviceOverrides?.android ?? machine?.devices?.android;
   if (android?.url) {
-    const ok = await reachable(android.url, android.apiKey);
-    console.log(line(ok, `Android emulator MCP (${android.url})`, ok ? "reachable" : "unreachable"));
+    const result = await reachableOpenAI(android.url, android.apiKey);
+    console.log(line(result.ok, `Android emulator MCP (${android.url})`, result.ok ? "reachable" : `unreachable (${result.status})`));
+  } else if (android?.type === "adb" || android?.serial || android?.defaultSerial) {
+    console.log(line(true, "Android target via adb", android.serial || android.defaultSerial || "configured"));
   } else {
-    console.log("  ✗ Android emulator MCP — not configured");
+    console.log("  ✗ Android target — not configured");
   }
   const figma = machine?.devices?.figma;
-  if (figma) console.log(line(isMac, "Figma MCP bridge", isMac ? "configured" : "macOS only — ignored on this box"));
+  if (figma) console.log(line(isMac && figma.enabled !== false, "Figma MCP bridge", isMac ? "configured" : "macOS only — ignored on this box"));
+
+  console.log("\nbackend:");
+  const backendUrls = [local?.backendUrl, local?.backendUrlTailscale, machine?.staging?.backendUrlLan, machine?.staging?.backendUrlTailscale].filter(Boolean);
+  const backendHealthPath = local?.healthPath || machine?.staging?.healthPath || project?.qa?.healthPath || "/health";
+  if (!backendUrls.length) console.log("  - none configured");
+  for (const base of [...new Set(backendUrls)]) {
+    const health = `${base.replace(/\/$/, "")}${backendHealthPath.startsWith("/") ? backendHealthPath : `/${backendHealthPath}`}`;
+    const result = await httpOk(health);
+    console.log(line(result.ok, health, String(result.status)));
+  }
+
+  console.log("\nsupabase:");
+  const supabaseUrls = [local?.supabaseUrl, local?.supabaseUrlTailscale, machine?.staging?.supabaseUrlLan, machine?.staging?.supabaseUrlTailscale].filter(Boolean);
+  const supabaseHealthPath = local?.supabaseHealthPath || machine?.staging?.supabaseHealthPath || "/auth/v1/health";
+  if (!supabaseUrls.length) console.log("  - none configured");
+  for (const base of [...new Set(supabaseUrls)]) {
+    const health = `${base.replace(/\/$/, "")}${supabaseHealthPath.startsWith("/") ? supabaseHealthPath : `/${supabaseHealthPath}`}`;
+    const result = await httpOk(health);
+    console.log(line(result.ok, health, String(result.status)));
+  }
   console.log();
 }
 
-function init(dir = ".") {
-  const committed = resolve(dir, PROJECT_FILE);
-  const local = resolve(dir, PROJECT_LOCAL_FILE);
-  if (existsSync(committed)) {
-    console.error(`${committed} already exists — not overwriting.`);
-    process.exit(1);
-  }
-  // Committed: shareable, no secrets, no environment specifics.
-  writeJson(committed, {
-    name: "",
-    build: "",
-    qa: { script: "", device: "android" },
-    branchPrefix: "autoship/",
-    channel: { type: "telegram" },
-  });
-  // Local: environment, never committed.
-  if (!existsSync(local)) {
-    writeJson(local, {
+const PRESETS = {
+  generic: {
+    shared: {
+      name: "",
+      build: "",
+      test: "",
+      qa: { script: "", device: "android" },
+      branchPrefix: "autoship/",
+      channel: { type: "telegram" },
+    },
+    local: {
       backendUrl: "",
       deviceOverrides: {},
       channel: { chat: "" },
       notes: "Environment-specific + secrets. This file is gitignored — never commit it.",
-    });
+    },
+  },
+  hermes: {
+    shared: {
+      name: "",
+      build: "",
+      test: "",
+      qa: { script: "", device: "android" },
+      branchPrefix: "autoship/",
+      channel: { type: "hermes" },
+    },
+    local: {
+      backendUrl: "",
+      supabaseUrl: "",
+      deviceOverrides: {},
+      notes: "Environment-specific + secrets. This file is gitignored — never commit it.",
+    },
+  },
+  "kentra-mobile": {
+    shared: {
+      name: "kentra-mobile",
+      type: "flutter-android",
+      packageName: "com.kentra.app",
+      build: "flutter pub get && dart run build_runner build --delete-conflicting-outputs && flutter build apk --debug",
+      apk: "build/app/outputs/flutter-apk/app-debug.apk",
+      test: "flutter test",
+      qa: {
+        device: "android",
+        defaultSerial: "emulator-5554",
+        physicalPixelSerial: "100.114.162.40:5555",
+        recordStart: "/home/ubuntu/record-start.sh",
+        recordStopTrim: "/home/ubuntu/trim.sh",
+      },
+      branchPrefix: "sapoepsilon/autoship-",
+      channel: { type: "hermes" },
+      relatedRepos: { backend: "/home/ubuntu/kentra-backend" },
+    },
+    local: {
+      backendUrl: "http://192.168.50.67:3001",
+      backendUrlTailscale: "http://100.69.20.48:3001",
+      healthPath: "/api/v1/health",
+      supabaseUrl: "http://192.168.50.67:54321",
+      supabaseUrlTailscale: "http://100.69.20.48:54321",
+      supabaseHealthPath: "/auth/v1/health",
+      deviceOverrides: {
+        android: { serial: "emulator-5554" },
+        physicalPixel: { serial: "100.114.162.40:5555", requiresExplicitRequest: true },
+      },
+      production: false,
+      notes: "Local Kentra autoship config for Hermes. Never commit this file. Preserve staging DB unless user approves reset.",
+    },
+  },
+  "kentra-backend": {
+    shared: {
+      name: "kentra-backend",
+      type: "node-express-api",
+      build: "npm run lint && npm run test:unit -- --run",
+      test: "npm run test:unit -- --run",
+      lint: "npm run lint",
+      dev: "npm run dev",
+      qa: { device: "api", healthPath: "/api/v1/health" },
+      branchPrefix: "sapoepsilon/autoship-",
+      channel: { type: "hermes" },
+      relatedRepos: { mobile: "/home/ubuntu/kentra-mobile" },
+    },
+    local: {
+      backendUrl: "http://192.168.50.67:3001",
+      backendUrlTailscale: "http://100.69.20.48:3001",
+      healthPath: "/api/v1/health",
+      supabaseUrl: "http://192.168.50.67:54321",
+      supabaseUrlTailscale: "http://100.69.20.48:54321",
+      supabaseHealthPath: "/auth/v1/health",
+      production: false,
+      notes: "Local Kentra backend autoship config for Hermes. Never commit this file. Preserve staging DB unless user approves reset.",
+    },
+  },
+};
+
+function init(dir = ".", { preset = "generic", merge = false } = {}) {
+  const selected = PRESETS[preset];
+  if (!selected) {
+    console.error(`unknown preset ${preset}. Known presets: ${Object.keys(PRESETS).join(", ")}`);
+    process.exit(1);
   }
-  console.log(`wrote ${committed} (commit) and ${local} (gitignored).`);
-  console.log("Fill them via the mobile-setup skill. Add '.mobileship.local.json' to the project's .gitignore.");
+  const committed = resolve(dir, PROJECT_FILE);
+  const local = resolve(dir, PROJECT_LOCAL_FILE);
+  if (existsSync(committed) && !merge) {
+    console.error(`${committed} already exists — not overwriting. Pass --merge to fill missing keys.`);
+    process.exit(1);
+  }
+  if (merge) mergeJson(committed, selected.shared);
+  else writeJson(committed, selected.shared);
+  if (existsSync(local) && merge) mergeJson(local, selected.local);
+  else if (!existsSync(local)) writeJson(local, selected.local);
+  console.log(`wrote ${committed} (commit intentionally) and ${local} (gitignored).`);
+  console.log("Add '.mobileship.local.json' to the project's .gitignore.");
 }
 
 function show() {
@@ -115,12 +286,13 @@ function show() {
   }
 }
 
-const cmd = process.argv[2];
-const arg = process.argv[3];
+const { positional, flags } = parseArgs(process.argv.slice(2));
+const cmd = positional[0];
+const arg = positional[1];
 if (cmd === "probe") await probe();
-else if (cmd === "init") init(arg);
+else if (cmd === "init") init(arg ?? ".", { preset: flags.preset ?? "generic", merge: flags.merge === true });
 else if (cmd === "show") show();
 else {
-  console.log("usage: mobile <probe|init [dir]|show>");
+  console.log("usage: mobile <probe|init [dir] [--preset generic|hermes|kentra-mobile|kentra-backend] [--merge]|show>");
   process.exit(cmd ? 1 : 0);
 }
