@@ -51,6 +51,7 @@ Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welc
 | [`mobile`](./plugins/mobile) | Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device. The orchestrating agent is the coder — no separate engine CLI. Includes backend/Supabase and Flutter QA setup. | Claude Code, Codex, Hermes | `mobile` `autoship` `agent` `qa` `e2e` `ci` |
 | [`muchotexto`](./plugins/muchotexto) | Answer in the minimum sentences that carry the meaning. Start at one and proactively grow by +1 only when a fact, caveat, or step would otherwise be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
 | [`vault-session`](./plugins/vault-session) | Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume to summarize where you left off and /save to write a session log, with first-run bootstrap that registers the vault MCP on each new machine. | Claude Code | `obsidian` `vault` `memory` `session` `mcp` `resume` `save` |
+| [`xquik-x-data`](./plugins/xquik-x-data) | Route bounded X data research and integration through Xquik REST or MCP with approval gates for private reads and state changes. Not affiliated with X Corp. | Claude Code, Codex | `x-data` `social-research` `mcp` `api` `monitoring` `webhooks` |
 <!-- CATALOG:END -->
 
 ## Repo layout

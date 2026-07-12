@@ -1,0 +1,13 @@
+{
+  "name": "xquik-x-data",
+  "description": "Route bounded X data research and integration through Xquik REST or MCP with approval gates for private reads and state changes. Not affiliated with X Corp.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Xquik-dev"
+  },
+  "license": "MIT",
+  "homepage": "https://docs.xquik.com",
+  "repository": "https://github.com/Xquik-dev/x-twitter-scraper",
+  "targets": ["Claude Code", "Codex"],
+  "keywords": ["x-data", "social-research", "mcp", "api", "monitoring", "webhooks"]
+}

@@ -55,6 +55,16 @@
       "license": "MIT",
       "category": "code-review",
       "tags": ["backend", "api", "code-review", "qa", "migrations", "e2e"]
+    },
+    {
+      "name": "xquik-x-data",
+      "source": "./plugins/xquik-x-data",
+      "description": "Route bounded X data research and integration through Xquik REST or MCP with approval gates for private reads and state changes. Not affiliated with X Corp.",
+      "version": "0.1.0",
+      "author": { "name": "Xquik-dev" },
+      "license": "MIT",
+      "category": "data",
+      "tags": ["x-data", "social-research", "mcp", "api", "monitoring", "webhooks"]
     }
   ]
 }
