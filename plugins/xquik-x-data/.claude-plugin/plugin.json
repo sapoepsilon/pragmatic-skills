@@ -1,0 +1,12 @@
+{
+  "name": "xquik-x-data",
+  "description": "Use Xquik for X/Twitter data research, media, monitoring, webhooks, and confirmation-gated account actions with API-key safety.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Xquik-dev"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Xquik-dev/x-twitter-scraper",
+  "repository": "https://github.com/Xquik-dev/x-twitter-scraper",
+  "keywords": ["x", "twitter", "social-data", "mcp", "api", "webhooks", "monitoring"]
+}

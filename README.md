@@ -46,11 +46,12 @@ Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welc
 <!-- CATALOG:START -->
 | Plugin | Description | Targets | Tags |
 | --- | --- | --- | --- |
-| [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), mobile autoship, verify-to-e2e. | Claude Code | `bundle` `skills` |
+| [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), mobile autoship, verify-to-e2e, mobile + backend comprehensive reviews, and xquik-x-data. | Claude Code | `bundle` `skills` |
 | [`backend-comprehensive-review`](./plugins/backend-comprehensive-review) | Multi-agent end-to-end backend/API PR review: phased orchestrator with parallel architecture, correctness, security/authorization, migrations, and test passes, real-request runtime verification against a project-configured non-prod target, and a PR-ready verdict. Auto-configures a per-repo review extension. | Claude Code, Hermes | `backend` `api` `code-review` `qa` `migrations` `e2e` `subagents` |
 | [`mobile`](./plugins/mobile) | Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device. The orchestrating agent is the coder — no separate engine CLI. Includes backend/Supabase and Flutter QA setup. | Claude Code, Codex, Hermes | `mobile` `autoship` `agent` `qa` `e2e` `ci` |
 | [`muchotexto`](./plugins/muchotexto) | Answer in the minimum sentences that carry the meaning. Start at one and proactively grow by +1 only when a fact, caveat, or step would otherwise be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
 | [`vault-session`](./plugins/vault-session) | Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume to summarize where you left off and /save to write a session log, with first-run bootstrap that registers the vault MCP on each new machine. | Claude Code | `obsidian` `vault` `memory` `session` `mcp` `resume` `save` |
+| [`xquik-x-data`](./plugins/xquik-x-data) | Use Xquik for X/Twitter data research, media, monitoring, webhooks, and confirmation-gated account actions with API-key safety. | Claude Code, Codex | `x` `twitter` `social-data` `mcp` `api` `webhooks` `monitoring` |
 <!-- CATALOG:END -->
 
 ## Repo layout
