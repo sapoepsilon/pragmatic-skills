@@ -1,28 +1,42 @@
 ---
 name: mobile-qa
-description: Stage 3 of the mobile auto-shipper — QA. Loop to drive the REAL app on a real simulator/emulator (iOS sim on Mac, Android emulator MCP, adb, Figma MCP bridge) against the real non-prod backend on a throwaway user, record the run, and verify the change. On pass, hand to ship; on failure, bounce a specific report back to implement. Use after mobile-implement reports a build is ready.
+description: Stage 3 of the mobile auto-shipper — drive the real app/API on a real non-prod target (iOS/Android simulator, physical device, browser, CLI/API), verify backend/Supabase integration, record evidence when possible, and either pass to ship or bounce a precise failure back to implementation. Use after mobile-implement reports a build is ready.
 ---
 
 # mobile: qa (stage 3 of 3)
 
-Goal: prove the change actually works by driving the **real app on a real device** against a **real, non-production** backend — not by reading the diff. Record the run so the dev can review it.
+Goal: prove the change actually works by driving the **real running system** against a **real, non-production** backend/Supabase target — not by reading the diff. Record evidence so the developer can review it.
 
-## Preconditions (from setup; assume, don't install)
+## Preconditions
 
-- A device/QA target for `qa.device`: **iOS simulator** (Mac, via `xcrun simctl` / the iOS MCP) or the **Android emulator MCP** (`mcp__mobile__*`). `adb` for direct Android control. **Figma MCP bridge** (Mac-only) for design-parity checks during QA.
-- Backend at `backendUrl` that is **non-prod** with migrations applied. Refuse to run if it looks like production. Use a throwaway user.
+- A device/QA target is explicit: iOS simulator, Android emulator, physical Android device, browser, CLI/API, or mobile MCP.
+- Backend and Supabase URLs are non-prod. Refuse production-looking URLs.
+- Use throwaway/seed QA users only. Do not paste real passwords where they will be logged.
+- Staging/Supabase reset is destructive and requires explicit user approval.
 
 ## Loop
 
-1. Install/launch the built app on the target device (`mcp__mobile__mobile_install_app` / `mobile_launch_app`, or simctl).
-2. Drive the exact flow the confirmed intent describes — tap/type/swipe via the device MCP; assert the observable result. If a design was referenced, compare against Figma via the bridge.
-3. **Record** the run (`mobile_start_screen_recording` / stop, or simctl recording) and save the artifact path to run-state.
-4. Decide pass/fail against the intent's acceptance criteria. Reuse / extend `verify-to-e2e` to codify the check as a durable test where it makes sense.
+1. **Install/launch or start the target.** For Android, install the built APK with `adb -s <serial> install -r -g <apk>` and launch the package. For API/backend, start/call the real non-prod service.
+2. **Record evidence.** Use mobile MCP recording, `adb shell screenrecord`, project helpers, screenshots, browser console/network logs, or terminal/API output as appropriate.
+3. **Drive exact acceptance criteria.** Tap/type/swipe via device tools, use browser tools, or call APIs with `curl`/project clients. Observe the end state directly.
+4. **Verify integration.** When the flow crosses layers, check the mobile UI/API response plus backend logs/state and Supabase-auth/data reachability.
+5. **Pass/fail honestly.** On failure or blocked verification, bounce to `mobile-implement` with step, expected, actual, logs/screenshots/recording path, and whether retry/reset is safe.
+6. **Codify if useful.** Use `verify-to-e2e` when the manual flow should become a durable test.
 
-## Handoff contract
+## Kentra references
 
-- **Pass** → write verdict + recording path to run-state, hand off to ship (PR + install). Notify the dev with the recording.
-- **Fail** (couldn't verify, or behavior is wrong) → bounce **back to `mobile-implement`** with a precise prompt: *"QA failed at [step]: expected [X], saw [Y]. Recording: [path]. Fix and return."* Increment the iteration count; if the loop budget is exceeded, stop and escalate to the dev instead of bouncing again.
-- The dev may say *"skip QA, I'll verify myself"* — only then bypass this stage and hand implement straight to ship. Default is always QA on.
+- Android package: `com.kentra.app`
+- APK: `/home/ubuntu/kentra-mobile/build/app/outputs/flutter-apk/app-debug.apk`
+- Emulator default serial: `emulator-5554`
+- Physical Pixel serial: `100.114.162.40:5555`; use only when requested and always target explicitly with `adb -s 100.114.162.40:5555`.
+- If the Pixel is unreachable, ask the user to wake/unlock it and verify Tailscale + Wireless debugging; do not silently fall back to emulator.
+- Recording helpers: `/home/ubuntu/record-start.sh`, `/home/ubuntu/trim.sh`
+- Backend QA endpoints: LAN `http://192.168.50.67:3001`, Tailscale `http://100.69.20.48:3001`, health path `/api/v1/health`.
+- Supabase QA endpoints: LAN `http://192.168.50.67:54321`, Tailscale `http://100.69.20.48:54321`; verify `/auth/v1/health` or `/rest/v1/`.
 
-Never run against production. Never declare pass without having actually driven the app.
+## Guardrails
+
+- Never run QA against production.
+- Never declare pass without actually driving the app/API and checking observable output.
+- Never reset staging/Supabase without explicit approval.
+- Never substitute emulator QA when the user requested the physical Pixel without clearly reporting the blocker and getting approval.

@@ -25,6 +25,20 @@ cp plugins/$SKILL/codex/$SKILL.md ~/.codex/prompts/$SKILL.md
 
 Then invoke as `/muchotexto` in Codex.
 
+## Install (Hermes Agent)
+
+Hermes does not use the Claude Code marketplace format directly, but compatible skills can be copied into `~/.hermes/skills/`.
+
+The mobile plugin includes a Hermes installer:
+
+```bash
+git clone https://github.com/sapoepsilon/pragmatic-skills
+cd pragmatic-skills
+node plugins/mobile/hermes/install.mjs
+```
+
+That installs the mobile stage skills under `~/.hermes/skills/pragmatic-skills/` and the helper CLI as `~/.local/bin/mobile-autoship`; run `/reload-skills` in an active Hermes session, or start a new session, then ask for `mobile-setup`.
+
 ## Catalog
 
 Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md).
@@ -32,8 +46,8 @@ Auto-generated from each plugin's `.claude-plugin/plugin.json`. Submissions welc
 <!-- CATALOG:START -->
 | Plugin | Description | Targets | Tags |
 | --- | --- | --- | --- |
-| [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), verify-to-e2e. | Claude Code | `bundle` `skills` |
-| [`mobile`](./plugins/mobile) | Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator. The orchestrating agent is the coder. Each stage is its own skill; environment is dev-configured per machine/project and never committed. | Claude Code, Codex | `mobile` `autoship` `agent` `qa` `e2e` `ci` |
+| [`pragmatic`](./plugins/pragmatic) | Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), mobile autoship, verify-to-e2e. | Claude Code | `bundle` `skills` |
+| [`mobile`](./plugins/mobile) | Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device. The orchestrating agent is the coder — no separate engine CLI. Includes backend/Supabase and Flutter QA setup. | Claude Code, Codex, Hermes | `mobile` `autoship` `agent` `qa` `e2e` `ci` |
 | [`muchotexto`](./plugins/muchotexto) | Answer in the minimum sentences that carry the meaning. Start at one and proactively grow by +1 only when a fact, caveat, or step would otherwise be lost. | Claude Code, Codex | `brevity` `communication` `meta` `tldr` |
 | [`vault-session`](./plugins/vault-session) | Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume to summarize where you left off and /save to write a session log, with first-run bootstrap that registers the vault MCP on each new machine. | Claude Code | `obsidian` `vault` `memory` `session` `mcp` `resume` `save` |
 <!-- CATALOG:END -->
