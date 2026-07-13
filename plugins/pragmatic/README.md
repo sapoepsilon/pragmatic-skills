@@ -19,6 +19,7 @@ Skills in this bundle are also distributable as individual plugins — if you on
 | [vault-session](../vault-session) | Save and resume Claude Code session notes through an Obsidian vault. |
 | [mobile](../mobile) | Mobile autoship stages (analyze → implement → QA), setup, verify-to-e2e, and mobile-comprehensive-review. |
 | [backend-comprehensive-review](../backend-comprehensive-review) | Multi-agent end-to-end backend/API PR review with runtime verification. |
+| [macos-screen-recorder](skills/macos-screen-recorder) | Record the Mac screen or an app and render it framed on a background with zoom segments (screencapture + ffmpeg). |
 
 ## Codex users
 
