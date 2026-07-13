@@ -9,52 +9,108 @@
     {
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
-      "description": "Bundle of all pragmatic-skills. Install once to get everything, including mobile autoship.",
-      "version": "0.5.0",
-      "author": { "name": "sapoepsilon" },
+      "description": "Bundle of all pragmatic-skills. Install once to get everything, including privacy-safe macOS QA capture.",
+      "version": "0.7.0",
+      "author": {
+        "name": "sapoepsilon"
+      },
       "license": "MIT",
       "category": "bundles",
-      "tags": ["bundle"]
+      "tags": [
+        "bundle"
+      ]
     },
     {
       "name": "muchotexto",
       "source": "./plugins/muchotexto",
       "description": "Answer in the minimum sentences that carry the meaning. Start at one and proactively grow by +1 only when a fact, caveat, or step would otherwise be lost.",
       "version": "0.2.0",
-      "author": { "name": "sapoepsilon" },
+      "author": {
+        "name": "sapoepsilon"
+      },
       "license": "MIT",
       "category": "communication",
-      "tags": ["brevity", "tldr", "meta"]
+      "tags": [
+        "brevity",
+        "tldr",
+        "meta"
+      ]
     },
     {
       "name": "vault-session",
       "source": "./plugins/vault-session",
       "description": "Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume and /save with first-run bootstrap that registers the vault MCP on each new machine.",
       "version": "0.1.0",
-      "author": { "name": "sapoepsilon" },
+      "author": {
+        "name": "sapoepsilon"
+      },
       "license": "MIT",
       "category": "memory",
-      "tags": ["obsidian", "vault", "memory", "session", "mcp"]
+      "tags": [
+        "obsidian",
+        "vault",
+        "memory",
+        "session",
+        "mcp"
+      ]
     },
     {
       "name": "mobile",
       "source": "./plugins/mobile",
-      "description": "Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device. The orchestrating agent is the coder — no separate engine CLI. Includes backend/Supabase and Flutter QA setup.",
+      "description": "Mobile auto-shipper. Drive a chat request through analyze -> implement -> QA -> PR on a real simulator/emulator/device. The orchestrating agent is the coder \u2014 no separate engine CLI. Includes backend/Supabase and Flutter QA setup.",
       "version": "0.1.0",
-      "author": { "name": "sapoepsilon" },
+      "author": {
+        "name": "sapoepsilon"
+      },
       "license": "MIT",
       "category": "automation",
-      "tags": ["mobile", "autoship", "agent", "qa", "e2e", "ci"]
+      "tags": [
+        "mobile",
+        "autoship",
+        "agent",
+        "qa",
+        "e2e",
+        "ci"
+      ]
     },
     {
       "name": "backend-comprehensive-review",
       "source": "./plugins/backend-comprehensive-review",
       "description": "Multi-agent end-to-end backend/API PR review: phased orchestrator with parallel review passes, real-request runtime verification against a project-configured non-prod target, and a PR-ready verdict. Auto-configures a per-repo review extension.",
       "version": "0.1.0",
-      "author": { "name": "sapoepsilon" },
+      "author": {
+        "name": "sapoepsilon"
+      },
       "license": "MIT",
       "category": "code-review",
-      "tags": ["backend", "api", "code-review", "qa", "migrations", "e2e"]
+      "tags": [
+        "backend",
+        "api",
+        "code-review",
+        "qa",
+        "migrations",
+        "e2e"
+      ]
+    },
+    {
+      "name": "macos-screen-recorder",
+      "source": "./plugins/macos-screen-recorder",
+      "description": "Privacy-safe macOS QA evidence capture through a user-configured Aqua-session LaunchAgent: signed install verification, clean-desktop staging, visual privacy review, user-owned storage upload, and desktop restoration.",
+      "version": "0.2.0",
+      "author": {
+        "name": "sapoepsilon"
+      },
+      "license": "MIT",
+      "category": "automation",
+      "tags": [
+        "macos",
+        "qa",
+        "screen-recording",
+        "privacy",
+        "launchagent",
+        "codesign",
+        "evidence"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
+import { join, dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
@@ -18,6 +18,20 @@ const validateMarketplace = ajv.compile(JSON.parse(readFileSync(marketplaceSchem
 
 const errors = [];
 const fail = (where, msg) => errors.push(`${where}: ${msg}`);
+
+function filesUnder(dir) {
+  if (!existsSync(dir)) return [];
+  const files = [];
+  const walk = (current) => {
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      const path = join(current, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (entry.isFile()) files.push(relative(dir, path));
+    }
+  };
+  walk(dir);
+  return files.sort();
+}
 
 if (!existsSync(marketplacePath)) {
   fail(".claude-plugin/marketplace.json", "missing");
@@ -45,7 +59,7 @@ const pluginDirs = existsSync(pluginsDir)
     })
   : [];
 
-const skillContents = new Map();
+const skillDirs = new Map();
 const bundlePlugins = [];
 
 for (const pluginName of pluginDirs) {
@@ -77,7 +91,9 @@ for (const pluginName of pluginDirs) {
   const skillsDir = join(pluginDir, "skills");
   if (existsSync(skillsDir)) {
     for (const skillName of readdirSync(skillsDir)) {
-      const skillPath = join(skillsDir, skillName, "SKILL.md");
+      const skillDir = join(skillsDir, skillName);
+      if (!statSync(skillDir).isDirectory()) continue;
+      const skillPath = join(skillDir, "SKILL.md");
       if (!existsSync(skillPath)) {
         fail(`${pluginName}/skills/${skillName}`, "missing SKILL.md");
         continue;
@@ -86,37 +102,45 @@ for (const pluginName of pluginDirs) {
       if (!content.startsWith("---\n")) {
         fail(`${pluginName}/skills/${skillName}/SKILL.md`, "missing YAML frontmatter");
       }
-      if (pluginName !== "pragmatic") {
-        skillContents.set(skillName, content);
-      }
+      if (pluginName !== "pragmatic") skillDirs.set(skillName, skillDir);
     }
   }
 
-  if (pluginName === "pragmatic") {
-    bundlePlugins.push(pluginDir);
-  }
+  if (pluginName === "pragmatic") bundlePlugins.push(pluginDir);
 }
 
 for (const bundleDir of bundlePlugins) {
   const skillsDir = join(bundleDir, "skills");
   if (!existsSync(skillsDir)) continue;
   for (const skillName of readdirSync(skillsDir)) {
-    const bundleSkillPath = join(skillsDir, skillName, "SKILL.md");
-    if (!existsSync(bundleSkillPath)) continue;
-    const bundleContent = readFileSync(bundleSkillPath, "utf8");
-    const canonical = skillContents.get(skillName);
-    if (canonical === undefined) {
+    const bundleSkillDir = join(skillsDir, skillName);
+    if (!statSync(bundleSkillDir).isDirectory()) continue;
+    const canonicalDir = skillDirs.get(skillName);
+    if (canonicalDir === undefined) {
       fail(
         `pragmatic/skills/${skillName}`,
         `bundle includes skill but no canonical plugin found at plugins/${skillName}/`,
       );
       continue;
     }
-    if (canonical !== bundleContent) {
+    const bundleFiles = filesUnder(bundleSkillDir);
+    const canonicalFiles = filesUnder(canonicalDir);
+    if (bundleFiles.join("\n") !== canonicalFiles.join("\n")) {
       fail(
-        `pragmatic/skills/${skillName}/SKILL.md`,
-        `out of sync with plugins/${skillName}/skills/${skillName}/SKILL.md — run 'npm run sync'`,
+        `pragmatic/skills/${skillName}`,
+        `file set is out of sync with plugins/${skillName}/skills/${skillName} — run 'npm run sync'`,
       );
+      continue;
+    }
+    for (const file of canonicalFiles) {
+      const bundleContent = readFileSync(join(bundleSkillDir, file));
+      const canonicalContent = readFileSync(join(canonicalDir, file));
+      if (!bundleContent.equals(canonicalContent)) {
+        fail(
+          `pragmatic/skills/${skillName}/${file}`,
+          `out of sync with plugins/${skillName}/skills/${skillName}/${file} — run 'npm run sync'`,
+        );
+      }
     }
   }
 }

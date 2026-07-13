@@ -1,0 +1,10 @@
+{
+  "name": "macos-screen-recorder",
+  "description": "Privacy-safe macOS QA evidence capture through a user-configured Aqua-session LaunchAgent: signed install verification, clean-desktop staging, screenshot and sampled-frame review, user-owned storage upload, PR evidence, and exact desktop restoration.",
+  "version": "0.2.0",
+  "author": { "name": "sapoepsilon" },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["macos", "qa", "screen-recording", "privacy", "launchagent", "codesign", "evidence"]
+}

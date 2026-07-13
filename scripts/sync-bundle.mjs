@@ -1,6 +1,14 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+} from "node:fs";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -13,6 +21,32 @@ if (!existsSync(bundleDir)) {
   process.exit(1);
 }
 
+function filesUnder(dir) {
+  if (!existsSync(dir)) return [];
+  const files = [];
+  const walk = (current) => {
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      const path = join(current, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (entry.isFile()) files.push(relative(dir, path));
+    }
+  };
+  walk(dir);
+  return files.sort();
+}
+
+function directoriesMatch(a, b) {
+  const aFiles = filesUnder(a);
+  const bFiles = filesUnder(b);
+  if (aFiles.length !== bFiles.length) return false;
+  for (let i = 0; i < aFiles.length; i++) {
+    if (aFiles[i] !== bFiles[i]) return false;
+    if (!readFileSync(join(a, aFiles[i])).equals(readFileSync(join(b, bFiles[i])))) return false;
+  }
+  return true;
+}
+
+mkdirSync(bundleSkillsDir, { recursive: true });
 let updated = 0;
 const present = new Set();
 
@@ -25,27 +59,24 @@ for (const pluginName of readdirSync(pluginsDir)) {
   if (!existsSync(srcSkillsDir)) continue;
 
   for (const skillName of readdirSync(srcSkillsDir)) {
-    const srcPath = join(srcSkillsDir, skillName, "SKILL.md");
-    if (!existsSync(srcPath)) continue;
+    const srcDir = join(srcSkillsDir, skillName);
+    const skillPath = join(srcDir, "SKILL.md");
+    if (!statSync(srcDir).isDirectory() || !existsSync(skillPath)) continue;
     const dstDir = join(bundleSkillsDir, skillName);
-    const dstPath = join(dstDir, "SKILL.md");
-    mkdirSync(dstDir, { recursive: true });
-    const src = readFileSync(srcPath, "utf8");
-    const existing = existsSync(dstPath) ? readFileSync(dstPath, "utf8") : null;
-    if (src !== existing) {
-      writeFileSync(dstPath, src);
+    if (!directoriesMatch(srcDir, dstDir)) {
+      rmSync(dstDir, { recursive: true, force: true });
+      cpSync(srcDir, dstDir, { recursive: true, preserveTimestamps: false });
       updated++;
     }
     present.add(skillName);
   }
 }
 
-if (existsSync(bundleSkillsDir)) {
-  for (const skillName of readdirSync(bundleSkillsDir)) {
-    if (!present.has(skillName)) {
-      console.warn(`warning: pragmatic/skills/${skillName} has no canonical source — remove it manually if intended.`);
-    }
+for (const skillName of readdirSync(bundleSkillsDir)) {
+  if (!present.has(skillName)) {
+    rmSync(join(bundleSkillsDir, skillName), { recursive: true, force: true });
+    console.warn(`removed stale pragmatic/skills/${skillName} (no canonical plugin source)`);
   }
 }
 
-console.log(`Bundle synced. ${updated} skill file(s) updated.`);
+console.log(`Bundle synced. ${updated} skill director${updated === 1 ? "y" : "ies"} updated.`);
