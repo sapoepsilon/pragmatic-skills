@@ -1,7 +1,7 @@
 {
   "name": "pragmatic",
-  "description": "Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), mobile autoship, verify-to-e2e, macos-screen-recorder.",
-  "version": "0.6.0",
+  "description": "Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session, mobile autoship, verify-to-e2e, macos-screen-recorder, and xquik-x-data.",
+  "version": "0.7.0",
   "author": {
     "name": "sapoepsilon"
   },

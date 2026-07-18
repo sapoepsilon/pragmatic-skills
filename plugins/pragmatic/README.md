@@ -20,6 +20,7 @@ Skills in this bundle are also distributable as individual plugins — if you on
 | [mobile](../mobile) | Mobile autoship stages (analyze → implement → QA), setup, verify-to-e2e, and mobile-comprehensive-review. |
 | [backend-comprehensive-review](../backend-comprehensive-review) | Multi-agent end-to-end backend/API PR review with runtime verification. |
 | [macos-screen-recorder](skills/macos-screen-recorder) | Record the Mac screen or an app and render it framed on a background with zoom segments (screencapture + ffmpeg). |
+| [xquik-x-data](../xquik-x-data) | Route bounded X data research through REST or MCP with explicit consent gates. Not affiliated with X Corp. |
 
 ## Codex users
 

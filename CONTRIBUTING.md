@@ -19,7 +19,7 @@ Not a good fit:
 
 ## Directory layout
 
-Each skill is one plugin under [`plugins/`](../plugins). For a skill named `my-skill`:
+Each skill is one plugin under [`plugins/`](./plugins). For a skill named `my-skill`:
 
 ```
 plugins/my-skill/
