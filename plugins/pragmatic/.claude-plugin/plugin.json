@@ -1,12 +1,15 @@
 {
   "name": "pragmatic",
-  "description": "Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), verify-to-e2e.",
-  "version": "0.4.0",
+  "description": "Bundle of all pragmatic-skills. Currently includes: muchotexto, vault-session (resume + save), verify-to-e2e, review-fix-loop.",
+  "version": "0.5.0",
   "author": {
     "name": "sapoepsilon"
   },
   "license": "MIT",
   "homepage": "https://github.com/sapoepsilon/pragmatic-skills",
   "repository": "https://github.com/sapoepsilon/pragmatic-skills",
-  "keywords": ["bundle", "skills"]
+  "keywords": [
+    "bundle",
+    "skills"
+  ]
 }
