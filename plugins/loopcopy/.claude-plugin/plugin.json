@@ -1,0 +1,12 @@
+{
+  "name": "loopcopy",
+  "description": "Package the work you are doing right now into one self-contained /loop command and copy it to the clipboard, ready to paste into a fresh session on any OS.",
+  "version": "0.1.0",
+  "author": {
+    "name": "sapoepsilon"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/loopcopy",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["loop", "clipboard", "handoff", "cron", "automation", "session"]
+}

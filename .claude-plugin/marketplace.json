@@ -10,7 +10,7 @@
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
       "description": "Bundle of all pragmatic-skills. Install once to get everything, including mobile autoship.",
-      "version": "0.5.0",
+      "version": "0.7.0",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
       "category": "bundles",
@@ -25,6 +25,16 @@
       "license": "MIT",
       "category": "communication",
       "tags": ["brevity", "tldr", "meta"]
+    },
+    {
+      "name": "loopcopy",
+      "source": "./plugins/loopcopy",
+      "description": "Package the work you are doing right now into one self-contained /loop command and copy it to the clipboard, ready to paste into a fresh session on any OS.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "automation",
+      "tags": ["loop", "clipboard", "handoff", "cron", "session"]
     },
     {
       "name": "vault-session",
