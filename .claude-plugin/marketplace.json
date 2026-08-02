@@ -10,7 +10,7 @@
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
       "description": "Bundle of all pragmatic-skills. Install once to get everything, including mobile autoship.",
-      "version": "0.7.0",
+      "version": "0.8.0",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
       "category": "bundles",
@@ -25,6 +25,16 @@
       "license": "MIT",
       "category": "communication",
       "tags": ["brevity", "tldr", "meta"]
+    },
+    {
+      "name": "review-fix-loop",
+      "source": "./plugins/review-fix-loop",
+      "description": "Address external review findings through a watcher -> implementer -> verifier loop with model-pinned subagents. Implementers never commit; an independent verifier attacks the merged result by execution before anything ships.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "code-review",
+      "tags": ["code-review", "subagents", "orchestration", "verification"]
     },
     {
       "name": "loopcopy",
