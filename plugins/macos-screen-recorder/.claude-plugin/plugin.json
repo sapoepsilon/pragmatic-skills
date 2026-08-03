@@ -1,12 +1,10 @@
 {
   "name": "macos-screen-recorder",
-  "description": "Record the macOS screen or a specific app and render it Screen-Studio-style — framed on a wallpaper/gradient background with rounded corners and optional zoom segments — using only screencapture + ffmpeg.",
-  "version": "0.1.0",
-  "author": {
-    "name": "sapoepsilon"
-  },
+  "description": "Privacy-safe macOS QA evidence capture through a user-configured Aqua-session LaunchAgent: signed install verification, clean-desktop staging, screenshot and sampled-frame review, user-owned storage upload, PR evidence, and exact desktop restoration.",
+  "version": "0.2.0",
+  "author": { "name": "sapoepsilon" },
   "license": "MIT",
-  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/macos-screen-recorder",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills",
   "repository": "https://github.com/sapoepsilon/pragmatic-skills",
-  "keywords": ["macos", "screen-recording", "ffmpeg", "demo", "qa"]
+  "keywords": ["macos", "qa", "screen-recording", "privacy", "launchagent", "codesign", "evidence"]
 }
