@@ -10,7 +10,7 @@
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
       "description": "Bundle of all pragmatic-skills. Install once to get everything, including mobile autoship.",
-      "version": "0.5.0",
+      "version": "0.9.0",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
       "category": "bundles",
@@ -27,6 +27,36 @@
       "tags": ["brevity", "tldr", "meta"]
     },
     {
+      "name": "mediator-loop",
+      "source": "./plugins/mediator-loop",
+      "description": "Blind implement -> review -> fix loop between two agents that never learn of each other's existence, mediated until an independent reviewer returns APPROVED. Engine-agnostic, disconnect-proof, usage-limit aware.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "automation",
+      "tags": ["orchestration", "agents", "loop", "mediator", "code-review"]
+    },
+    {
+      "name": "review-fix-loop",
+      "source": "./plugins/review-fix-loop",
+      "description": "Address external review findings through a watcher -> implementer -> verifier loop with model-pinned subagents. Implementers never commit; an independent verifier attacks the merged result by execution before anything ships.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "code-review",
+      "tags": ["code-review", "subagents", "orchestration", "verification"]
+    },
+    {
+      "name": "loopcopy",
+      "source": "./plugins/loopcopy",
+      "description": "Package the work you are doing right now into one self-contained /loop command and copy it to the clipboard, ready to paste into a fresh session on any OS.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "automation",
+      "tags": ["loop", "clipboard", "handoff", "cron", "session"]
+    },
+    {
       "name": "vault-session",
       "source": "./plugins/vault-session",
       "description": "Persistent session memory for Claude Code backed by an Obsidian vault exposed through an MCP filesystem server. Provides /resume and /save with first-run bootstrap that registers the vault MCP on each new machine.",
@@ -35,6 +65,16 @@
       "license": "MIT",
       "category": "memory",
       "tags": ["obsidian", "vault", "memory", "session", "mcp"]
+    },
+    {
+      "name": "macos-screen-recorder",
+      "source": "./plugins/macos-screen-recorder",
+      "description": "Record the macOS screen or a specific app and render it Screen-Studio-style — framed background, rounded corners, optional zoom segments — using only screencapture + ffmpeg.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "automation",
+      "tags": ["macos", "screen-recording", "ffmpeg", "demo", "qa"]
     },
     {
       "name": "mobile",
