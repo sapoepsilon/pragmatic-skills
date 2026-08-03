@@ -1,0 +1,12 @@
+{
+  "name": "review-fix-loop",
+  "description": "Address external review findings through a watcher -> implementer -> verifier loop with model-pinned subagents. Implementers never commit; an independent verifier attacks the merged result by execution before anything ships.",
+  "version": "0.1.0",
+  "author": {
+    "name": "sapoepsilon"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/review-fix-loop",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["code-review", "subagents", "orchestration", "verification", "pr"]
+}
