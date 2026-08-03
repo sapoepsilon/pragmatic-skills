@@ -11,7 +11,7 @@ Fix reviewer findings through three separated roles — **watcher**, **implement
 
 | Role | Who | Model | Why |
 |---|---|---|---|
-| Watcher | the main session | session model | Owns context, judgment, and the commit. Never delegates the final gate. |
+| Watcher | the main session | session model (ideally the most capable available — e.g. Fable 5) | Owns context, judgment, and the commit. Never delegates the final gate. |
 | Reproducer | watcher (inline) or a subagent for big batteries | `sonnet` | Mechanical probe execution; cheap and fast. |
 | Implementer(s) | one subagent per disjoint file set | `opus` | The fix is the hard reasoning step. |
 | Verifier | one subagent over the merged result | `opus` | Must out-think the implementers, so never a weaker model than them. |
