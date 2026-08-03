@@ -1,0 +1,12 @@
+{
+  "name": "macos-screen-recorder",
+  "description": "Record the macOS screen or a specific app and render it Screen-Studio-style — framed on a wallpaper/gradient background with rounded corners and optional zoom segments — using only screencapture + ffmpeg.",
+  "version": "0.1.0",
+  "author": {
+    "name": "sapoepsilon"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/macos-screen-recorder",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["macos", "screen-recording", "ffmpeg", "demo", "qa"]
+}
