@@ -10,7 +10,7 @@
       "name": "pragmatic",
       "source": "./plugins/pragmatic",
       "description": "Bundle of all pragmatic-skills. Install once to get everything, including mobile autoship.",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "author": { "name": "sapoepsilon" },
       "license": "MIT",
       "category": "bundles",
@@ -25,6 +25,16 @@
       "license": "MIT",
       "category": "communication",
       "tags": ["brevity", "tldr", "meta"]
+    },
+    {
+      "name": "mediator-loop",
+      "source": "./plugins/mediator-loop",
+      "description": "Blind implement -> review -> fix loop between two agents that never learn of each other's existence, mediated until an independent reviewer returns APPROVED. Engine-agnostic, disconnect-proof, usage-limit aware.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "automation",
+      "tags": ["orchestration", "agents", "loop", "mediator", "code-review"]
     },
     {
       "name": "review-fix-loop",
@@ -55,6 +65,16 @@
       "license": "MIT",
       "category": "memory",
       "tags": ["obsidian", "vault", "memory", "session", "mcp"]
+    },
+    {
+      "name": "macos-screen-recorder",
+      "source": "./plugins/macos-screen-recorder",
+      "description": "Record the macOS screen or a specific app and render it Screen-Studio-style — framed background, rounded corners, optional zoom segments — using only screencapture + ffmpeg.",
+      "version": "0.1.0",
+      "author": { "name": "sapoepsilon" },
+      "license": "MIT",
+      "category": "automation",
+      "tags": ["macos", "screen-recording", "ffmpeg", "demo", "qa"]
     },
     {
       "name": "mobile",

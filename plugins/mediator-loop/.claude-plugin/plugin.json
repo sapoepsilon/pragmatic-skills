@@ -1,0 +1,12 @@
+{
+  "name": "mediator-loop",
+  "description": "Blind implement -> review -> fix loop between two agents that never learn of each other's existence, mediated until an independent reviewer returns APPROVED. Engine-agnostic, disconnect-proof (supervisor + draft-PR persistence), usage-limit aware.",
+  "version": "0.1.0",
+  "author": {
+    "name": "sapoepsilon"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/sapoepsilon/pragmatic-skills/tree/main/plugins/mediator-loop",
+  "repository": "https://github.com/sapoepsilon/pragmatic-skills",
+  "keywords": ["orchestration", "code-review", "agents", "loop", "mediator", "blind-review"]
+}
