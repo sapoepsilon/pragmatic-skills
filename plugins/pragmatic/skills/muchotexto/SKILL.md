@@ -1,6 +1,6 @@
 ---
 name: muchotexto
-description: Answer in the minimum number of sentences that still carries the meaning. Start at exactly one and proactively grow by +1 whenever a fact, caveat, or required step would otherwise be lost — never pad, never stop short. Use when the user says "muchotexto", "mucho texto", "tldr", "too long", "shorter", "tighter", "one sentence", or otherwise signals brevity, either to compress the previous response or to get a tight first-time answer to a new question.
+description: Answer in the minimum number of sentences that still carries the meaning. Start at exactly one and proactively grow by +1 whenever a fact, caveat, or required step would otherwise be lost — never pad, never stop short. Use when the user says "muchotexto", "mucho texto", "tldr", "too long", "shorter", "tighter", "one sentence", "bullet points, 3 words each" / "3-word bullets", or otherwise signals brevity, either to compress the previous response or to get a tight first-time answer to a new question.
 ---
 
 # muchotexto
@@ -62,3 +62,29 @@ Most uses land at 1–3 sentences. If you find yourself past 5, you have probabl
 > User: tldr
 >
 > You: The deploy is failing for two independent reasons — your `engines.node` pins 18 while the project targets 20, and `DATABASE_URL` is unset in the Production environment. Fix both before retrying; fixing one will surface the other as the next error.
+
+## Mode 3 — 3-word bullets
+
+Trigger: the user asks for bullet points with a word cap ("bullet points, each no longer than 3 words", "3-word bullets", "one line each, max N words").
+
+Rules:
+
+- **One bullet per item, each ≤ N words** (default N = 3). Count every word, including articles and arrows; drop them before dropping the noun.
+- **Verb first when it is an action** ("Enable Telegram Topics", "Recharge z.ai"), noun first when it is a fact ("Nightly sync green").
+- **No sub-bullets, no trailing sentence, no headings.** The list is the whole answer.
+- **Specifics survive**: product names, IDs, numbers count as words but are never replaced with vaguer ones ("Install qbo-mcp", not "Install accounting plugin").
+- **Order = the order the user should act**, unless they asked to sort otherwise.
+- If an item cannot be said in N words without losing the meaning, it becomes **two** bullets, not a longer one.
+
+**Example.** The user's open items after a long setup session.
+
+> User: bullet points, each no longer than 3 words, my next actions
+>
+> You:
+> - Enable Telegram Topics
+> - Decide sandbox runner
+> - Recharge z.ai
+> - Gmail forward rule
+> - Save dashboard password
+> - Install qbo-mcp
+
